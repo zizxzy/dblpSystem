@@ -1,4 +1,4 @@
-package util;
+package com.test;
 
 import sun.awt.datatransfer.DataTransferer;
 
@@ -23,6 +23,12 @@ public class Util {
     //记录论文author和对应论文文件位置偏移量链表的Hashtable
     static Hashtable<String, ArrayList<Long>> authorIndex = new Hashtable<String, ArrayList<Long>>();
 
+    //记录论文year和文章内容的Hashtable
+    static Hashtable<Integer, ArrayList<String>> yearSentence = new Hashtable<>();
+
+    static HashSet<String> Preposition = new HashSet();
+
+
     static String pathname;
     
     public static Hashtable<String, Long> getTitleIndex() {
@@ -34,7 +40,22 @@ public class Util {
     }
 
     public static void main(String[] args) {
-        xmlparse("E:\\大一课程学习\\数据结构\\数据结构大作业\\dblp.xml\\dblp.xml");
+
+        Preposition.add("for");
+        Preposition.add("of");
+        Preposition.add("on");
+        Preposition.add("the");
+        Preposition.add("a");
+        Preposition.add("to");
+        Preposition.add("with");
+        Preposition.add("in");
+        Preposition.add("and");
+        Preposition.add("an");
+        Preposition.add("using");
+        Preposition.add("by");
+
+        xmlparse("C:\\dbltest\\src\\com\\test\\dblp.xml");
+        YearWord();
     }
 
     public static void xmlparse(String p) {
@@ -118,21 +139,96 @@ public class Util {
         System.out.println("查询作者消耗时间："+(System.currentTimeMillis()-bgSearchTime));
     }
 
+    //年度词汇分析
+    public static void YearWord(){
+        System.out.println(yearSentence.size());
+        long firstTime = System.currentTimeMillis();
+        Hashtable<Integer,Hashtable<String,Integer>> words = new Hashtable<>();
+        Enumeration years = yearSentence.keys();
+        while(years.hasMoreElements()) {
+            Hashtable<String, Integer> wordsCount = new Hashtable<String, Integer>();
+            int thisYear = (Integer) years.nextElement();
+            ArrayList<String> titles = yearSentence.get(thisYear);
+            //将所有单词都计次并放入wordsCount中
+            for (int i = 0; i < titles.size(); i++) {
+                //获得title
+                String title = titles.get(i);
+                //打散title
+                if(titles.get(i)==null){
+                    continue;
+                }
+
+                StringTokenizer st = new StringTokenizer(title, " ,?.!:\"'\n#",false);
+                while (st.hasMoreElements()) {
+                    String word = st.nextToken().toLowerCase();
+                    if(Preposition.contains(word)){
+                        continue;
+                    }
+                    if (wordsCount.containsKey(word)) {
+                        //记录加1
+                        wordsCount.put(word, wordsCount.get(word) + 1);
+                    } else {
+                        wordsCount.put(word, 1);
+                    }
+                }
+            }
+
+
+            //此年的年度词汇集合
+            Hashtable<String, Integer> tempTable = new Hashtable<>();
+            //选择出出现次数最多的前十个字符
+
+
+            for (int i = 0; i < 10; i++) {
+                int tempCount = 0;
+                String tempWord = "";
+                Enumeration word = wordsCount.keys();
+                while (word.hasMoreElements()) {
+                    String thisWord = (String) word.nextElement();
+                    int count = wordsCount.get(thisWord);
+                    if (count > tempCount) {
+                        tempCount = count;
+                        tempWord = thisWord;
+                    }
+                }
+                tempTable.put(tempWord, tempCount);
+                wordsCount.remove(tempWord);
+            }
+            words.put(thisYear, tempTable);
+        }
+        //测试代码
+        Enumeration thisYear = words.keys();
+        while (thisYear.hasMoreElements()){
+            int year = (Integer) thisYear.nextElement();
+            System.out.println("years:"+year);
+            Enumeration temp = words.get(year).keys();
+            while(temp.hasMoreElements()){
+                String word = (String) temp.nextElement();
+                System.out.print("word:"+word+" ");
+                System.out.println("count:"+words.get(year).get(word));
+            }
+        }
+        System.out.println("年度热词生成时间："+(System.currentTimeMillis()-firstTime));
+    }
+
+
 }
 
-class MyThread extends Thread {
-    private long beginPisition;
-    private long endPisition;
 
-    MyThread(long beginPosition, long endPisition) {
-        this.beginPisition = beginPosition;
-        this.endPisition = endPisition;
+
+class MyThread extends Thread {
+    private long beginPosition;
+    private long endPosition;
+
+    MyThread(long beginPosition, long endPosition) {
+        this.beginPosition = beginPosition;
+        this.endPosition = endPosition;
     }
 
 
     @Override
     public void run() {
-        long curPosition = beginPisition;
+        long curPosition = beginPosition;
         long recordPosition;
         RandomAccessFile randomAccessFile = null;
         try {
@@ -144,13 +240,41 @@ class MyThread extends Thread {
                 i=0;
                 while (b[i++] != '<') ;       //移动当前数组指针，直到指向'<'
                 String str = new String(b, i, 3);    //获取标签前三个字符，与二级标签集合对比
+                //关联同一个art下面的year和title
+                if (str.equals("art")||str.equals("inp")||str.equals("phd")||str.equals("pro")||str.equals("inc")){
+                    //定位到title
+                    int p = i;
+                    while(b[p++] != '<'|| b[p] != 't');
+                    while(b[p++] != '>');
+                    int j = 0;
+                    //j是记录内容长度的变量
+                    while (b[p + j++] != '<') ;
+                    //关联year和title
+                    int k = p+1;
+                    //移动当前数组指针，直到指向'y'
+                    while(b[k++] != '<'|| b[k] != 'y');
+                    while(b[k++] != '>');
+                    int year = Integer.parseInt(new String(b,k,4));
+
+                    if (Util.yearSentence.get(year)!=null)
+                    {
+                        Util.yearSentence.get(year).add(new String(b, p, j - 1));
+                    }
+                    else {
+                        ArrayList<String> temp = new ArrayList<String>();
+                        temp.add(new String(b, p, j - 1));
+                        Util.yearSentence.put(year,temp);
+                    }
+                }
                 recordPosition = curPosition + i - 1;      //设置解析到的当前记录的起始文件位置
                 String endStr = "/" + str;           //获取当前记录的结束标签，后面判断匹配
                 while (i <= 38990) {
                     while (i <= 38990 && b[++i] != '<') ;
                     str = new String(b, ++i, 3);
-                    if (str.equals("aut"))
-                    {
+
+
+                    if (str.equals("aut")) {
+
                         while (b[i++] != '>') ;
                         int j = 0;
                         //j是记录内容长度的变量
@@ -162,11 +286,12 @@ class MyThread extends Thread {
                             Util.authorIndex.get(authorName).add(recordPosition);
                         }
                         else {
-                            ArrayList<Long> temp =new ArrayList<Long>();
+                            ArrayList<Long> temp = new ArrayList<Long>();
                             temp.add(recordPosition);
                             Util.authorIndex.put(authorName,temp);
                         }
                     }
+
                     if (str.equals("tit")) {    //找到记录的title，写进hashtable
                         //移动到标签的结尾部分
                         while (b[i++] != '>') ;
@@ -187,10 +312,11 @@ class MyThread extends Thread {
                     }
                 }
                 curPosition = curPosition + i;   //从该条记录结束位置进行下一条记录解析
-                if (curPosition == endPisition) {
+                if (curPosition == endPosition) {
                     break;
                 }
                 randomAccessFile.seek(curPosition);
+
 
             }
         } catch (FileNotFoundException e) {
