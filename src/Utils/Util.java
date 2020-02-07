@@ -1,15 +1,10 @@
-package Utils;
+package util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.util.HashSet;
-import java.util.Hashtable;
+import sun.awt.datatransfer.DataTransferer;
 
-/*
-xml解析的基础部分，利用RandomAccessFile模拟sax流式读取，同时获取title和偏移量组织成Hashtable
-*/
+import java.io.*;
+import java.util.*;
+
 public class Util {
 
 
@@ -19,136 +14,191 @@ public class Util {
      * 三级标签：author, title, journal, year, ee, publisher, isbn, volume, month, url, note, cdrom, editor,
      * booktitle, series, crossref, pages, school, cite, number, chapter, address
      * 四级标签：sup, sub, i, tt
+     * getTitleIndex()返回记录论文title和对应文件位置偏移量的Hashtable
+     * getAuthorIndex()记录论文author和对应论文文件位置偏移量链表的Hashtable
      */
-    private static HashSet<String> first = new HashSet<String>();  //一二三四级标签集合
-    private static HashSet<String> second = new HashSet<String>();
-    private static HashSet<String> third = new HashSet<String>();
-    private static HashSet<String> four = new HashSet<String>();
-    private static long curPosition = 85;          //当前文件指针位置
-    private static long recordPosition = 0;        //当前记录的起始位置
-
     //记录论文title和对应文件位置偏移量的Hashtable
-    private static Hashtable<String, Long> titleIndex = new Hashtable<String, Long>();
+    static Hashtable<String, Long> titleIndex = new Hashtable<String, Long>();
 
+    //记录论文author和对应论文文件位置偏移量链表的Hashtable
+    static Hashtable<String, ArrayList<Long>> authorIndex = new Hashtable<String, ArrayList<Long>>();
+
+    static String pathname;
+    
     public static Hashtable<String, Long> getTitleIndex() {
         return titleIndex;
     }
 
+    public static Hashtable<String, ArrayList<Long>> getAuthorIndex() {
+        return authorIndex;
+    }
+
     public static void main(String[] args) {
-        xmlparse("E:/javaDtLea/dblp.xml");
+        xmlparse("E:\\大一课程学习\\数据结构\\数据结构大作业\\dblp.xml\\dblp.xml");
+    }
+
+    public static void xmlparse(String p) {
+        long beginTime = System.currentTimeMillis();
+        pathname = p;
+
+        MyThread t1 = new MyThread(85, 262972109);
+        MyThread t2 = new MyThread(262972109, 520423552);
+        MyThread t3 = new MyThread(520423552, 767086229);
+        MyThread t4 = new MyThread(767086229, 1019092844);
+        MyThread t5 = new MyThread(1019092844, 1181969134);
+        MyThread t6 = new MyThread(1181969134, 1243160074);
+        MyThread t7 = new MyThread(1243160074, 1304904757);
+        MyThread t8 = new MyThread(1304904757, 1366778013);
+        MyThread t9 = new MyThread(1366778013, 1428836102);
+        MyThread t10 = new MyThread(1428836102, 1641072021);
+        MyThread t11 = new MyThread(1641072021, 1899927212);
+        MyThread t12 = new MyThread(1899927212, 2155228018L);
+        MyThread t13 = new MyThread(2155228018L, 2412732033L);
+        MyThread t14 = new MyThread(2412732033L, 2675681975L);
+        MyThread t15 = new MyThread(2675681975L, 2785938278L);
+
+        try {
+            t1.start();
+            t2.start();
+            t3.start();
+            t4.start();
+            t5.start();
+            t6.start();
+            t7.start();
+            t8.start();
+            t9.start();
+            t10.start();
+            t11.start();
+            t12.start();
+            t13.start();
+            t14.start();
+            t15.start();
+            t1.join();
+            t2.join();
+            t3.join();
+            t4.join();
+            t5.join();
+            t6.join();
+            t7.join();
+            t8.join();
+            t9.join();
+            t10.join();
+            t11.join();
+            t12.join();
+            t13.join();
+            t14.join();
+            t15.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        /**
+         * 测试代码，测试解析和查询性能
+         */
+        //System.out.println("解析完毕！文件总大小：" + curPosition);
+        long beginSearchTime = System.currentTimeMillis();
+        System.out.println("解析消耗时间：" + (System.currentTimeMillis() - beginTime));
+        System.out.println("查询论文：MvsGCN: A Novel Graph Convolutional Network for Multi-video Summarization.");
+        long locator = titleIndex.get("MvsGCN: A Novel Graph Convolutional Network for Multi-video Summarization.");
+        byte[] b = new byte[39000];
+        try (RandomAccessFile randomAccessFile = new RandomAccessFile(new File(pathname), "rw")) {
+            randomAccessFile.seek(locator);
+            randomAccessFile.read(b);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("论文所在位置：" + locator);
+        System.out.println("查询论文消耗时间：" + (System.currentTimeMillis() - beginSearchTime));
+        long bgSearchTime = System.currentTimeMillis();
+        System.out.println("查询作者:Jiaxin Wu");
+        ArrayList<Long> authorList =authorIndex.get("Jiaxin Wu");
+        for (int i = 0; i < authorList.size(); i++) {
+            System.out.println("Jiaxin Wu论文"+i+"所在位置:  "+authorList.get(i));
+        }
+        System.out.println("查询作者消耗时间："+(System.currentTimeMillis()-bgSearchTime));
+    }
+
+}
+
+class MyThread extends Thread {
+    private long beginPisition;
+    private long endPisition;
+
+    MyThread(long beginPosition, long endPisition) {
+        this.beginPisition = beginPosition;
+        this.endPisition = endPisition;
     }
 
 
-    public static void xmlparse(String pathname) {
-        long beginParseTime = System.currentTimeMillis();
-        initSet();       //初始化标签集合赋值
+    @Override
+    public void run() {
+        long curPosition = beginPisition;
+        long recordPosition;
         RandomAccessFile randomAccessFile = null;
         try {
-            //以读写方式读取文件
-            randomAccessFile = new RandomAccessFile(new File(pathname), "rw");
+            int i;
+            randomAccessFile = new RandomAccessFile(new File(Util.pathname), "rw");
             randomAccessFile.seek(curPosition);
             byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
             while (randomAccessFile.read(b) != -1) {     //读取到文件末尾即退出循环
-                int i = 0;
-                //这边i在后面已经+1了，所以后面需要减去1
-                while (b[i++] != '<') ;       //移动当前数组指针，直到指向'<'，二级标签的情况
+                i=0;
+                while (b[i++] != '<') ;       //移动当前数组指针，直到指向'<'
                 String str = new String(b, i, 3);    //获取标签前三个字符，与二级标签集合对比
-                //当读取到的值包含在二级标签中才进入，节约时间
-                if (second.contains(str)) {
-                    recordPosition = curPosition + i - 1;      //设置解析到的当前记录的起始文件位置 二级标签的起始位置
-                    String endStr = "/" + str;           //获取当前记录的结束标签，后面判断匹配
-                    while (i <= 38990) {
-                        //读取到二级标签的<
-                        while (i <= 38990 && b[++i] != '<') ;
-                        str = new String(b, ++i, 3);
-                        if (str.equals("tit")) {    //找到记录的title，写进hashtable
-                            //移动到标签的结尾部分
-                            while (b[i++] != '>') ;
-                            int j = 0;
-                            //j是记录内容长度的变量
-                            while (b[i + j++] != '<') ;
-                            //写入hashtable
-                            titleIndex.put(new String(b, i, j - 1), recordPosition);
-                            //title只有一个 所以直接跳出循环
-                            break;
+                recordPosition = curPosition + i - 1;      //设置解析到的当前记录的起始文件位置
+                String endStr = "/" + str;           //获取当前记录的结束标签，后面判断匹配
+                while (i <= 38990) {
+                    while (i <= 38990 && b[++i] != '<') ;
+                    str = new String(b, ++i, 3);
+                    if (str.equals("aut"))
+                    {
+                        while (b[i++] != '>') ;
+                        int j = 0;
+                        //j是记录内容长度的变量
+                        while (b[i + j++] != '<') ;
+                        //写入hashtable
+                        String authorName = new String(b,i,j-1);
+                        if (Util.authorIndex.get(authorName)!=null)
+                        {
+                            Util.authorIndex.get(authorName).add(recordPosition);
+                        }
+                        else {
+                            ArrayList<Long> temp =new ArrayList<Long>();
+                            temp.add(recordPosition);
+                            Util.authorIndex.put(authorName,temp);
                         }
                     }
-                    while (i <= 38990) {
-                        //移动到标签结束的位置
-                        while (i <= 38990 && b[i++] != '<') ;    //获取该条记录结束位置
-                        str = new String(b, i, 4);
-                        //二级标签结束的位置
-                        if (str.equals(endStr)) {
-                            //读取到吧标签结束的位置跳出循环
-                            break;
-                        }
+                    if (str.equals("tit")) {    //找到记录的title，写进hashtable
+                        //移动到标签的结尾部分
+                        while (b[i++] != '>') ;
+                        int j = 0;
+                        //j是记录内容长度的变量
+                        while (b[i + j++] != '<') ;
+                        //写入hashtable
+                        Util.titleIndex.put(new String(b, i, j - 1), recordPosition);
+                        //title只有一个 所以直接跳出循环
+                        break;
                     }
-                    curPosition = curPosition + i;   //从该条记录结束位置进行下一条记录解析，更新curPosition
-                    randomAccessFile.seek(curPosition);
                 }
-            }
-            /**
-             * 测试代码，测试解析和查询性能
-             */
-            System.out.println("解析完毕！文件总大小：" + curPosition);
-            long beginSearchTime = System.currentTimeMillis();
-            System.out.println("解析消耗时间：" + (System.currentTimeMillis() - beginParseTime));
-            System.out.println("查询论文：Secure Coprocessor.");
-            long locator = titleIndex.get("Secure Coprocessor.");
-            randomAccessFile.seek(locator);
-            randomAccessFile.read(b);
-            System.out.println("论文所在位置：" + locator);
-            System.out.println("查询消耗时间：" + (System.currentTimeMillis() - beginSearchTime));
-            System.out.println(new String(b));
-           // System.out.print("最长记录长度：" + maxLen);
+                while (i <= 38990) {
+                    while (i <= 38990 && b[i++] != '<') ;    //获取该条记录结束位置
+                    str = new String(b, i, 4);
+                    if (str.equals(endStr)) {
+                        break;
+                    }
+                }
+                curPosition = curPosition + i;   //从该条记录结束位置进行下一条记录解析
+                if (curPosition == endPisition) {
+                    break;
+                }
+                randomAccessFile.seek(curPosition);
 
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-    }
-
-    /**
-     * 标签集合赋值
-     * 全部设为3个字符串便于匹配操作
-     */
-    private static void initSet() {
-        first.add("dpl");
-        second.add("art");
-        second.add("boo");
-        second.add("pro");
-        second.add("inp");
-        second.add("www");
-        second.add("mas");
-        second.add("inc");
-        second.add("phd");
-        third.add("aut");
-        third.add("tit");
-        third.add("jou");
-        third.add("yea");
-        third.add("ee>");
-        third.add("pub");
-        third.add("isb");
-        third.add("vol");
-        third.add("mon");
-        third.add("url");
-        third.add("not");
-        third.add("cdr");
-        third.add("edi");
-        third.add("boo");
-        third.add("ser");
-        third.add("cro");
-        third.add("pag");
-        third.add("sch");
-        third.add("cit");
-        third.add("num");
-        third.add("cha");
-        third.add("add");
-        four.add("sup");
-        four.add("sub");
-        four.add("i");
-        four.add("tt");
     }
 }
+
+
