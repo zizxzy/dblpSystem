@@ -38,6 +38,28 @@ public class Util {
     public static Hashtable<String, ArrayList<Long>> getAuthorIndex() {
         return authorIndex;
     }
+	//排序耗时
+	 public static Map.Entry[] SortByValue(Hashtable<String, Number> ht) {
+        long start = System.currentTimeMillis();
+        Set<Map.Entry<String, Number>> set = ht.entrySet();
+        Map.Entry[] entries = (Map.Entry[]) set.toArray(new Map.Entry[set.size()]);
+        Arrays.sort(entries, new Comparator<Map.Entry>() {
+            @Override
+            //实现接口中的方法
+            public int compare(Map.Entry o1, Map.Entry o2) {
+                //取得两个值
+                int value1 = Integer.parseInt((o1).getValue()
+                        .toString());
+                int value2 = Integer.parseInt((o2).getValue()
+                        .toString());
+                //降序
+                return ((Comparable) value2).compareTo(value1);
+            }
+        });
+        long end = System.currentTimeMillis();
+        System.out.println("排序耗时:" + (end - start));
+        return entries;
+    }
 
     public static void main(String[] args) {
 
@@ -137,6 +159,20 @@ public class Util {
             System.out.println("Jiaxin Wu论文"+i+"所在位置:  "+authorList.get(i));
         }
         System.out.println("查询作者消耗时间："+(System.currentTimeMillis()-bgSearchTime));
+		//获取论文数量前100的作者
+        Hashtable<String, Number> Top100Authors = new Hashtable<String, Number>();
+//遍历得到的HashTable，键是作者名，值是链表的长度
+        Enumeration<String> keys = authorIndex.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            Top100Authors.put(key, authorIndex.get(key).size());
+        }
+        //对Hashtable进行排序
+        Map.Entry[] set = SortByValue(Top100Authors);
+        //输出排序之后前100的值
+        for (int i = 0; i < 100; i++) {
+            System.out.println(set[i].getKey().toString() + ":" + set[i].getValue().toString());
+        }
     }
 
     //年度词汇分析
