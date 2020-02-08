@@ -1,6 +1,8 @@
 package com.test;
 
 import sun.awt.datatransfer.DataTransferer;
+import org.ahocorasick.trie.Emit;
+import org.ahocorasick.trie.Trie;
 
 import java.io.*;
 import java.util.*;
@@ -59,6 +61,65 @@ public class Util {
         long end = System.currentTimeMillis();
         System.out.println("排序耗时:" + (end - start));
         return entries;
+    }
+	//单个字符（关键字）的部分搜索匹配，使用正则表达式，时间消耗不高
+    public static Hashtable<String, Long> SearchTitleByKeyword(ArrayList<String> words, Hashtable<String, Long> hashtable) {
+        StringBuilder regexp = new StringBuilder();
+        Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
+        for (String word :
+                words) {
+            regexp.append("(?=.*").append(word).append(")");
+        }
+        Pattern pattern = Pattern.compile(regexp.toString());
+        Enumeration<String> keys = hashtable.keys();
+        //遍历title的Hashtable
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            Matcher matcher = pattern.matcher(key);
+            //find模糊查询
+            if (matcher.find()) {
+                //放到新开的Hashtable中
+                stringLongHashtable.put(key, hashtable.get(key));
+            }
+        }
+        //返回
+        return stringLongHashtable;
+    }
+//多个字符（关键字）的部分搜索匹配，使用正则表达式，效率低下，可以不考虑使用
+    public static Hashtable<String, Long> SearchTitleByKeyword(String words, Hashtable<String, Long> hashtable) {
+        Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
+        Pattern pattern = Pattern.compile(words);
+        Enumeration<String> keys = hashtable.keys();
+        //遍历title的Hashtable
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            Matcher matcher = pattern.matcher(key);
+            //find模糊查询
+            if (matcher.find()) {
+                //放到新开的Hashtable中
+                stringLongHashtable.put(key, hashtable.get(key));
+            }
+        }
+        //返回
+        return stringLongHashtable;
+    }
+//多个字符（关键字）的部分搜索匹配，使用AC自动机
+    public static Hashtable<String,Long> SearchTitleByKeywordByAc(String [] words,Hashtable<String, Long> hashtable)
+    {
+        Trie trie = Trie.builder().onlyWholeWords().addKeywords(words).build();
+        Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
+        Enumeration<String> keys = hashtable.keys();
+        //遍历title的Hashtable
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+           if (trie.parseText(key)!=null)
+           {
+               //放到新开的Hashtable中
+               stringLongHashtable.put(key, hashtable.get(key));
+           }
+        }
+        //返回
+        return stringLongHashtable;
     }
 
     public static void main(String[] args) {
@@ -173,6 +234,28 @@ public class Util {
         for (int i = 0; i < 100; i++) {
             System.out.println(set[i].getKey().toString() + ":" + set[i].getValue().toString());
         }
+		
+		
+        //测试模糊查询
+        long searchBeginTime = System.currentTimeMillis();
+        ArrayList<String> partialSearch = new ArrayList<String>();
+        //这里可以增加多个搜索的关键词
+        partialSearch.add("com");
+        partialSearch.add("deve");
+        String [] strings = new String[3];
+        strings[0] = "com";
+        strings[1] = "deve";
+        strings[2] = "and";
+        //得到根据关键词搜索匹配出来的结果
+        Hashtable<String, Long> resultList = Util.SearchTitleByKeywordByAc(strings, titleIndex);
+        //遍历得到的结果列表
+        Enumeration<String> keys1 = resultList.keys();
+        /*  while (keys1.hasMoreElements()) {
+            String key = (String) keys1.nextElement();
+            System.out.println("模糊查询的结果有" + key + " 偏移量是：" + resultList.get(key));
+        }*/
+        System.out.println("模糊查询得到的结果集有" + resultList.size() + "条");
+        System.out.println("模糊查询需要的时间有:" + (System.currentTimeMillis() - searchBeginTime) + "ms");
     }
 
     //年度词汇分析
