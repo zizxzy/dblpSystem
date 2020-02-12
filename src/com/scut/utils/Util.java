@@ -4,11 +4,11 @@ import org.ahocorasick.trie.Trie;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Util {
-
 
     /**
      * dblp.xml 文件中一级标签：dblp
@@ -20,17 +20,19 @@ public class Util {
      * getAuthorIndex()记录论文author和对应论文文件位置偏移量链表的Hashtable
      */
     //记录论文title和对应文件位置偏移量的Hashtable
-    static Hashtable<String, Long> titleIndex = new Hashtable<String, Long>();
+    static ConcurrentHashMap<String, Long> titleIndex = new ConcurrentHashMap<String, Long>();
 
     //记录论文author和对应论文文件位置偏移量链表的Hashtable
-    static Hashtable<String, ArrayList<Long>> authorIndex = new Hashtable<String, ArrayList<Long>>();
+    static ConcurrentHashMap<String, ArrayList<Long>> authorIndex = new ConcurrentHashMap<String, ArrayList<Long>>();
 
     //记录论文year和文章内容的Hashtable
-    static Hashtable<Integer, ArrayList<String>> yearSentence = new Hashtable<>();
+    static ConcurrentHashMap<Integer, ArrayList<String>> yearSentence = new ConcurrentHashMap<>();
 
-    static HashSet<String> Preposition = new HashSet();
+    static CopyOnWriteArraySet<String> Preposition = new CopyOnWriteArraySet<String>();
 
     static String pathname;
+
+    private static List<Long> gap = new ArrayList<>();
 
     static {
         Preposition.add("for");
@@ -45,18 +47,23 @@ public class Util {
         Preposition.add("an");
         Preposition.add("using");
         Preposition.add("by");
+
+        Collections.addAll(gap, 85L, 262972109L, 520423552L, 767086229L,
+                1019092844L, 1181969134L, 1243160074L, 1304904757L, 1366778013L,
+                1428836102L, 1641072021L, 1899927212L, 2155228018L, 2412732033L,
+                2675681975L, 2785938278L);
     }
 
-    public static Hashtable<String, Long> getTitleIndex() {
+    public static ConcurrentHashMap<String, Long> getTitleIndex() {
         return titleIndex;
     }
 
-    public static Hashtable<String, ArrayList<Long>> getAuthorIndex() {
+    public static ConcurrentHashMap<String, ArrayList<Long>> getAuthorIndex() {
         return authorIndex;
     }
 
     //排序耗时
-    public static Map.Entry[] SortByValue(Hashtable<String, Number> ht) {
+    public static Map.Entry[] SortByValue(HashMap<String, Number> ht) {
         long start = System.currentTimeMillis();
         Set<Map.Entry<String, Number>> set = ht.entrySet();
         Map.Entry[] entries = (Map.Entry[]) set.toArray(new Map.Entry[set.size()]);
@@ -79,7 +86,7 @@ public class Util {
     }
 
     //单个字符（关键字）的部分搜索匹配，使用正则表达式，时间消耗不高
-    public static Hashtable<String, Long> SearchTitleByKeyword(ArrayList<String> words, Hashtable<String, Long> hashtable) {
+    public static Hashtable<String, Long> SearchTitleByKeyword(ArrayList<String> words, ConcurrentHashMap<String, Long> hashtable) {
         StringBuilder regexp = new StringBuilder();
         Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
         for (String word :
@@ -103,7 +110,7 @@ public class Util {
     }
 
     //多个字符（关键字）的部分搜索匹配，使用正则表达式，效率低下，可以不考虑使用
-    public static Hashtable<String, Long> SearchTitleByKeyword(String words, Hashtable<String, Long> hashtable) {
+    public static Hashtable<String, Long> SearchTitleByKeyword(String words, ConcurrentHashMap<String, Long> hashtable) {
         Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
         Pattern pattern = Pattern.compile(words);
         Enumeration<String> keys = hashtable.keys();
@@ -122,9 +129,9 @@ public class Util {
     }
 
     //多个字符（关键字）的部分搜索匹配，使用AC自动机
-    public static Hashtable<String, Long> SearchTitleByKeywordByAc(String[] words, Hashtable<String, Long> hashtable) {
+    public static HashMap<String, Long> SearchTitleByKeywordByAc(String[] words, ConcurrentHashMap<String, Long> hashtable) {
         Trie trie = Trie.builder().onlyWholeWords().addKeywords(words).build();
-        Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
+        HashMap<String, Long> stringLongHashtable = new HashMap<String, Long>();
         Enumeration<String> keys = hashtable.keys();
         //遍历title的Hashtable
         while (keys.hasMoreElements()) {
@@ -139,60 +146,78 @@ public class Util {
     }
 
 
-    public static void xmlparse(String p) {
+    public static void xmlParse(String p) throws Exception {
         long beginTime = System.currentTimeMillis();
         pathname = p;
 
-        MyThread t1 = new MyThread(85, 262972109);
-        MyThread t2 = new MyThread(262972109, 520423552);
-        MyThread t3 = new MyThread(520423552, 767086229);
-        MyThread t4 = new MyThread(767086229, 1019092844);
-        MyThread t5 = new MyThread(1019092844, 1181969134);
-        MyThread t6 = new MyThread(1181969134, 1243160074);
-        MyThread t7 = new MyThread(1243160074, 1304904757);
-        MyThread t8 = new MyThread(1304904757, 1366778013);
-        MyThread t9 = new MyThread(1366778013, 1428836102);
-        MyThread t10 = new MyThread(1428836102, 1641072021);
-        MyThread t11 = new MyThread(1641072021, 1899927212);
-        MyThread t12 = new MyThread(1899927212, 2155228018L);
-        MyThread t13 = new MyThread(2155228018L, 2412732033L);
-        MyThread t14 = new MyThread(2412732033L, 2675681975L);
-        MyThread t15 = new MyThread(2675681975L, 2785938278L);
+        //得到线程池参数
+        Properties properties = new Properties();
+        properties.load(new FileInputStream("src\\com\\scut\\global.properties"));
+        int corePoolSize = Integer.parseInt(properties.getProperty("corePoolSize"));
+        int maximumPoolSize = Integer.parseInt(properties.getProperty("maximumPoolSize"));
+        int blockingQueueSize = Integer.parseInt(properties.getProperty("BlockingQueueSize"));
 
-        try {
-            t1.start();
-            t2.start();
-            t3.start();
-            t4.start();
-            t5.start();
-            t6.start();
-            t7.start();
-            t8.start();
-            t9.start();
-            t10.start();
-            t11.start();
-            t12.start();
-            t13.start();
-            t14.start();
-            t15.start();
-            t1.join();
-            t2.join();
-            t3.join();
-            t4.join();
-            t5.join();
-            t6.join();
-            t7.join();
-            t8.join();
-            t9.join();
-            t10.join();
-            t11.join();
-            t12.join();
-            t13.join();
-            t14.join();
-            t15.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        //ExecutorService threadPool = Executors.newFixedThreadPool(6);
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize,
+                60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(blockingQueueSize));
+
+        CountDownLatch countDownLatch = new CountDownLatch(maximumPoolSize);
+        for (int i = 0; i < gap.size() - 1; ++i) {
+            ParseXmlRunnable parseXmlRunnable = new ParseXmlRunnable(gap.get(i), gap.get(i + 1), countDownLatch);
+            threadPoolExecutor.execute(parseXmlRunnable);
         }
+        countDownLatch.await();
+
+//        MyThread t1 = new MyThread(85, 262972109);
+//        MyThread t2 = new MyThread(262972109, 520423552);
+//        MyThread t3 = new MyThread(520423552, 767086229);
+//        MyThread t4 = new MyThread(767086229, 1019092844);
+//        MyThread t5 = new MyThread(1019092844, 1181969134);
+//        MyThread t6 = new MyThread(1181969134, 1243160074);
+//        MyThread t7 = new MyThread(1243160074, 1304904757);
+//        MyThread t8 = new MyThread(1304904757, 1366778013);
+//        MyThread t9 = new MyThread(1366778013, 1428836102);
+//        MyThread t10 = new MyThread(1428836102, 1641072021);
+//        MyThread t11 = new MyThread(1641072021, 1899927212);
+//        MyThread t12 = new MyThread(1899927212, 2155228018L);
+//        MyThread t13 = new MyThread(2155228018L, 2412732033L);
+//        MyThread t14 = new MyThread(2412732033L, 2675681975L);
+//        MyThread t15 = new MyThread(2675681975L, 2785938278L);
+//
+//        try {
+//            t1.start();
+//            t2.start();
+//            t3.start();
+//            t4.start();
+//            t5.start();
+//            t6.start();
+//            t7.start();
+//            t8.start();
+//            t9.start();
+//            t10.start();
+//            t11.start();
+//            t12.start();
+//            t13.start();
+//            t14.start();
+//            t15.start();
+//            t1.join();
+//            t2.join();
+//            t3.join();
+//            t4.join();
+//            t5.join();
+//            t6.join();
+//            t7.join();
+//            t8.join();
+//            t9.join();
+//            t10.join();
+//            t11.join();
+//            t12.join();
+//            t13.join();
+//            t14.join();
+//            t15.join();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         /**
          * 测试代码，测试解析和查询性能
@@ -218,9 +243,10 @@ public class Util {
             System.out.println("Jiaxin Wu论文" + i + "所在位置:  " + authorList.get(i));
         }
         System.out.println("查询作者消耗时间：" + (System.currentTimeMillis() - bgSearchTime));
+
         //获取论文数量前100的作者
-        Hashtable<String, Number> Top100Authors = new Hashtable<String, Number>();
-//遍历得到的HashTable，键是作者名，值是链表的长度
+        HashMap<String, Number> Top100Authors = new HashMap<String, Number>();
+        //遍历得到的HashMap，键是作者名，值是链表的长度
         Enumeration<String> keys = authorIndex.keys();
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
@@ -245,9 +271,9 @@ public class Util {
         strings[1] = "deve";
         strings[2] = "and";
         //得到根据关键词搜索匹配出来的结果
-        Hashtable<String, Long> resultList = Util.SearchTitleByKeywordByAc(strings, titleIndex);
+        HashMap<String, Long> resultList = Util.SearchTitleByKeywordByAc(strings, titleIndex);
         //遍历得到的结果列表
-        Enumeration<String> keys1 = resultList.keys();
+        Set<String> keySet = resultList.keySet();
         /*  while (keys1.hasMoreElements()) {
             String key = (String) keys1.nextElement();
             System.out.println("模糊查询的结果有" + key + " 偏移量是：" + resultList.get(key));
@@ -328,25 +354,36 @@ public class Util {
         System.out.println("年度热词生成时间：" + (System.currentTimeMillis() - firstTime));
     }
 
-    private static class MyThread extends Thread {
+    private static class ParseXmlRunnable implements Runnable {
         private long beginPosition;
         private long endPosition;
+        private CountDownLatch countDownLatch;
 
-        MyThread(long beginPosition, long endPosition) {
+        ParseXmlRunnable(long beginPosition, long endPosition, CountDownLatch countDownLatch) {
             this.beginPosition = beginPosition;
             this.endPosition = endPosition;
+            this.countDownLatch = countDownLatch;
         }
 
+        @Override
+        public String toString() {
+            return "ParseXmlRunnable{" +
+                    "beginPosition=" + beginPosition +
+                    ", endPosition=" + endPosition +
+                    ", countDownLatch=" + countDownLatch +
+                    '}';
+        }
 
         @Override
         public void run() {
+            System.out.println(Thread.currentThread().getName() + "开始运行" + this.toString());
+            long startTime = System.currentTimeMillis();
             long curPosition = beginPosition;
             long recordPosition;
             RandomAccessFile randomAccessFile = null;
             try {
                 int i;
                 randomAccessFile = new RandomAccessFile(new File(Util.pathname), "rw");
-                System.out.println(randomAccessFile.length());
                 randomAccessFile.seek(curPosition);
                 byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
                 while (randomAccessFile.read(b) != -1) {     //读取到文件末尾即退出循环
@@ -433,9 +470,12 @@ public class Util {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                System.out.println(Thread.currentThread().getName() + ": 解析完成");
+                long endTime = System.currentTimeMillis();
+                System.out.println(Thread.currentThread().getName() + ": 解析完成，耗时" + (endTime - startTime));
+                countDownLatch.countDown();
             }
         }
+
     }
 
 

@@ -15,11 +15,11 @@ import java.util.Properties;
 import static com.scut.utils.Util.YearWord;
 
 public class UtilsTest {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Properties properties = new Properties();
         properties.load(new FileInputStream("src\\com\\scut\\global.properties"));
         String fileName = properties.getProperty("data_location");
-        Util.xmlparse(fileName);
+        Util.xmlParse(fileName);
         Util.YearWord();
     }
 }
