@@ -1,4 +1,4 @@
-package mywindows;
+package com.scut.mywindows;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,7 +75,7 @@ public class MyWindows extends JFrame {
      * 设置页面上方图片
      */
     private void setMyImage() {
-        JLabel jLabel = new JLabel(new ImageIcon("src\\mywindows\\titleImage.png"));
+        JLabel jLabel = new JLabel(new ImageIcon("src\\com.scut.mywindows\\titleImage.png"));
         JPanel jp = new JPanel();
         jp.add(jLabel);
         frame.add(jp);   //将图片添加至页面上方
@@ -326,7 +326,7 @@ public class MyWindows extends JFrame {
         if (history.size() != 0) {    //设置"清空"标签
             jLabelHistory.get(history.size()).setText("  清空");
             jLabelHistory.get(history.size()).setForeground(Color.BLUE);
-            //jLabelHistory.get(history.size()).setIcon(new ImageIcon("E:\\大一课程学习\\数据结构\\数据结构大作业\\源代码\\src\\mywindows\\deleteHistory.png"));
+            //jLabelHistory.get(history.size()).setIcon(new ImageIcon("E:\\大一课程学习\\数据结构\\数据结构大作业\\源代码\\src\\com.scut.mywindows\\deleteHistory.png"));
         }
         // JScrollPane jScrollPane = new JScrollPane();
     }

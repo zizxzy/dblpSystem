@@ -1,11 +1,11 @@
-package com.test;
+package com.scut.utils;
 
-import sun.awt.datatransfer.DataTransferer;
-import org.ahocorasick.trie.Emit;
 import org.ahocorasick.trie.Trie;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 
@@ -30,9 +30,23 @@ public class Util {
 
     static HashSet<String> Preposition = new HashSet();
 
-
     static String pathname;
-    
+
+    static {
+        Preposition.add("for");
+        Preposition.add("of");
+        Preposition.add("on");
+        Preposition.add("the");
+        Preposition.add("a");
+        Preposition.add("to");
+        Preposition.add("with");
+        Preposition.add("in");
+        Preposition.add("and");
+        Preposition.add("an");
+        Preposition.add("using");
+        Preposition.add("by");
+    }
+
     public static Hashtable<String, Long> getTitleIndex() {
         return titleIndex;
     }
@@ -40,8 +54,9 @@ public class Util {
     public static Hashtable<String, ArrayList<Long>> getAuthorIndex() {
         return authorIndex;
     }
-	//排序耗时
-	 public static Map.Entry[] SortByValue(Hashtable<String, Number> ht) {
+
+    //排序耗时
+    public static Map.Entry[] SortByValue(Hashtable<String, Number> ht) {
         long start = System.currentTimeMillis();
         Set<Map.Entry<String, Number>> set = ht.entrySet();
         Map.Entry[] entries = (Map.Entry[]) set.toArray(new Map.Entry[set.size()]);
@@ -62,7 +77,8 @@ public class Util {
         System.out.println("排序耗时:" + (end - start));
         return entries;
     }
-	//单个字符（关键字）的部分搜索匹配，使用正则表达式，时间消耗不高
+
+    //单个字符（关键字）的部分搜索匹配，使用正则表达式，时间消耗不高
     public static Hashtable<String, Long> SearchTitleByKeyword(ArrayList<String> words, Hashtable<String, Long> hashtable) {
         StringBuilder regexp = new StringBuilder();
         Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
@@ -85,7 +101,8 @@ public class Util {
         //返回
         return stringLongHashtable;
     }
-//多个字符（关键字）的部分搜索匹配，使用正则表达式，效率低下，可以不考虑使用
+
+    //多个字符（关键字）的部分搜索匹配，使用正则表达式，效率低下，可以不考虑使用
     public static Hashtable<String, Long> SearchTitleByKeyword(String words, Hashtable<String, Long> hashtable) {
         Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
         Pattern pattern = Pattern.compile(words);
@@ -103,43 +120,24 @@ public class Util {
         //返回
         return stringLongHashtable;
     }
-//多个字符（关键字）的部分搜索匹配，使用AC自动机
-    public static Hashtable<String,Long> SearchTitleByKeywordByAc(String [] words,Hashtable<String, Long> hashtable)
-    {
+
+    //多个字符（关键字）的部分搜索匹配，使用AC自动机
+    public static Hashtable<String, Long> SearchTitleByKeywordByAc(String[] words, Hashtable<String, Long> hashtable) {
         Trie trie = Trie.builder().onlyWholeWords().addKeywords(words).build();
         Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
         Enumeration<String> keys = hashtable.keys();
         //遍历title的Hashtable
         while (keys.hasMoreElements()) {
             String key = (String) keys.nextElement();
-           if (trie.parseText(key)!=null)
-           {
-               //放到新开的Hashtable中
-               stringLongHashtable.put(key, hashtable.get(key));
-           }
+            if (trie.parseText(key) != null) {
+                //放到新开的Hashtable中
+                stringLongHashtable.put(key, hashtable.get(key));
+            }
         }
         //返回
         return stringLongHashtable;
     }
 
-    public static void main(String[] args) {
-
-        Preposition.add("for");
-        Preposition.add("of");
-        Preposition.add("on");
-        Preposition.add("the");
-        Preposition.add("a");
-        Preposition.add("to");
-        Preposition.add("with");
-        Preposition.add("in");
-        Preposition.add("and");
-        Preposition.add("an");
-        Preposition.add("using");
-        Preposition.add("by");
-
-        xmlparse("C:\\dbltest\\src\\com\\test\\dblp.xml");
-        YearWord();
-    }
 
     public static void xmlparse(String p) {
         long beginTime = System.currentTimeMillis();
@@ -215,12 +213,12 @@ public class Util {
         System.out.println("查询论文消耗时间：" + (System.currentTimeMillis() - beginSearchTime));
         long bgSearchTime = System.currentTimeMillis();
         System.out.println("查询作者:Jiaxin Wu");
-        ArrayList<Long> authorList =authorIndex.get("Jiaxin Wu");
+        ArrayList<Long> authorList = authorIndex.get("Jiaxin Wu");
         for (int i = 0; i < authorList.size(); i++) {
-            System.out.println("Jiaxin Wu论文"+i+"所在位置:  "+authorList.get(i));
+            System.out.println("Jiaxin Wu论文" + i + "所在位置:  " + authorList.get(i));
         }
-        System.out.println("查询作者消耗时间："+(System.currentTimeMillis()-bgSearchTime));
-		//获取论文数量前100的作者
+        System.out.println("查询作者消耗时间：" + (System.currentTimeMillis() - bgSearchTime));
+        //获取论文数量前100的作者
         Hashtable<String, Number> Top100Authors = new Hashtable<String, Number>();
 //遍历得到的HashTable，键是作者名，值是链表的长度
         Enumeration<String> keys = authorIndex.keys();
@@ -234,15 +232,15 @@ public class Util {
         for (int i = 0; i < 100; i++) {
             System.out.println(set[i].getKey().toString() + ":" + set[i].getValue().toString());
         }
-		
-		
+
+
         //测试模糊查询
         long searchBeginTime = System.currentTimeMillis();
         ArrayList<String> partialSearch = new ArrayList<String>();
         //这里可以增加多个搜索的关键词
         partialSearch.add("com");
         partialSearch.add("deve");
-        String [] strings = new String[3];
+        String[] strings = new String[3];
         strings[0] = "com";
         strings[1] = "deve";
         strings[2] = "and";
@@ -259,12 +257,12 @@ public class Util {
     }
 
     //年度词汇分析
-    public static void YearWord(){
+    public static void YearWord() {
         System.out.println(yearSentence.size());
         long firstTime = System.currentTimeMillis();
-        Hashtable<Integer,Hashtable<String,Integer>> words = new Hashtable<>();
+        Hashtable<Integer, Hashtable<String, Integer>> words = new Hashtable<>();
         Enumeration years = yearSentence.keys();
-        while(years.hasMoreElements()) {
+        while (years.hasMoreElements()) {
             Hashtable<String, Integer> wordsCount = new Hashtable<String, Integer>();
             int thisYear = (Integer) years.nextElement();
             ArrayList<String> titles = yearSentence.get(thisYear);
@@ -273,14 +271,14 @@ public class Util {
                 //获得title
                 String title = titles.get(i);
                 //打散title
-                if(titles.get(i)==null){
+                if (titles.get(i) == null) {
                     continue;
                 }
 
-                StringTokenizer st = new StringTokenizer(title, " ,?.!:\"'\n#",false);
+                StringTokenizer st = new StringTokenizer(title, " ,?.!:\"'\n#", false);
                 while (st.hasMoreElements()) {
                     String word = st.nextToken().toLowerCase();
-                    if(Preposition.contains(word)){
+                    if (Preposition.contains(word)) {
                         continue;
                     }
                     if (wordsCount.containsKey(word)) {
@@ -317,133 +315,131 @@ public class Util {
         }
         //测试代码
         Enumeration thisYear = words.keys();
-        while (thisYear.hasMoreElements()){
+        while (thisYear.hasMoreElements()) {
             int year = (Integer) thisYear.nextElement();
-            System.out.println("years:"+year);
+            System.out.println("years:" + year);
             Enumeration temp = words.get(year).keys();
-            while(temp.hasMoreElements()){
+            while (temp.hasMoreElements()) {
                 String word = (String) temp.nextElement();
-                System.out.print("word:"+word+" ");
-                System.out.println("count:"+words.get(year).get(word));
+                System.out.print("word:" + word + " ");
+                System.out.println("count:" + words.get(year).get(word));
             }
         }
-        System.out.println("年度热词生成时间："+(System.currentTimeMillis()-firstTime));
+        System.out.println("年度热词生成时间：" + (System.currentTimeMillis() - firstTime));
     }
 
+    private static class MyThread extends Thread {
+        private long beginPosition;
+        private long endPosition;
 
-}
-
-
-
-class MyThread extends Thread {
-    private long beginPosition;
-    private long endPosition;
-
-    MyThread(long beginPosition, long endPosition) {
-        this.beginPosition = beginPosition;
-        this.endPosition = endPosition;
-    }
+        MyThread(long beginPosition, long endPosition) {
+            this.beginPosition = beginPosition;
+            this.endPosition = endPosition;
+        }
 
 
-    @Override
-    public void run() {
-        long curPosition = beginPosition;
-        long recordPosition;
-        RandomAccessFile randomAccessFile = null;
-        try {
-            int i;
-            randomAccessFile = new RandomAccessFile(new File(Util.pathname), "rw");
-            randomAccessFile.seek(curPosition);
-            byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
-            while (randomAccessFile.read(b) != -1) {     //读取到文件末尾即退出循环
-                i=0;
-                while (b[i++] != '<') ;       //移动当前数组指针，直到指向'<'
-                String str = new String(b, i, 3);    //获取标签前三个字符，与二级标签集合对比
-                //关联同一个art下面的year和title
-                if (str.equals("art")||str.equals("inp")||str.equals("phd")||str.equals("pro")||str.equals("inc")){
-                    //定位到title
-                    int p = i;
-                    while(b[p++] != '<'|| b[p] != 't');
-                    while(b[p++] != '>');
-                    int j = 0;
-                    //j是记录内容长度的变量
-                    while (b[p + j++] != '<') ;
-                    //关联year和title
-                    int k = p+1;
-                    //移动当前数组指针，直到指向'y'
-                    while(b[k++] != '<'|| b[k] != 'y');
-                    while(b[k++] != '>');
-                    int year = Integer.parseInt(new String(b,k,4));
-
-                    if (Util.yearSentence.get(year)!=null)
-                    {
-                        Util.yearSentence.get(year).add(new String(b, p, j - 1));
-                    }
-                    else {
-                        ArrayList<String> temp = new ArrayList<String>();
-                        temp.add(new String(b, p, j - 1));
-                        Util.yearSentence.put(year,temp);
-                    }
-                }
-                recordPosition = curPosition + i - 1;      //设置解析到的当前记录的起始文件位置
-                String endStr = "/" + str;           //获取当前记录的结束标签，后面判断匹配
-                while (i <= 38990) {
-                    while (i <= 38990 && b[++i] != '<') ;
-                    str = new String(b, ++i, 3);
-
-
-                    if (str.equals("aut")) {
-
-                        while (b[i++] != '>') ;
-                        int j = 0;
-                        //j是记录内容长度的变量
-                        while (b[i + j++] != '<') ;
-                        //写入hashtable
-                        String authorName = new String(b,i,j-1);
-                        if (Util.authorIndex.get(authorName)!=null)
-                        {
-                            Util.authorIndex.get(authorName).add(recordPosition);
-                        }
-                        else {
-                            ArrayList<Long> temp = new ArrayList<Long>();
-                            temp.add(recordPosition);
-                            Util.authorIndex.put(authorName,temp);
-                        }
-                    }
-
-                    if (str.equals("tit")) {    //找到记录的title，写进hashtable
-                        //移动到标签的结尾部分
-                        while (b[i++] != '>') ;
-                        int j = 0;
-                        //j是记录内容长度的变量
-                        while (b[i + j++] != '<') ;
-                        //写入hashtable
-                        Util.titleIndex.put(new String(b, i, j - 1), recordPosition);
-                        //title只有一个 所以直接跳出循环
-                        break;
-                    }
-                }
-                while (i <= 38990) {
-                    while (i <= 38990 && b[i++] != '<') ;    //获取该条记录结束位置
-                    str = new String(b, i, 4);
-                    if (str.equals(endStr)) {
-                        break;
-                    }
-                }
-                curPosition = curPosition + i;   //从该条记录结束位置进行下一条记录解析
-                if (curPosition == endPosition) {
-                    break;
-                }
+        @Override
+        public void run() {
+            long curPosition = beginPosition;
+            long recordPosition;
+            RandomAccessFile randomAccessFile = null;
+            try {
+                int i;
+                randomAccessFile = new RandomAccessFile(new File(Util.pathname), "rw");
+                System.out.println(randomAccessFile.length());
                 randomAccessFile.seek(curPosition);
+                byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
+                while (randomAccessFile.read(b) != -1) {     //读取到文件末尾即退出循环
+                    i = 0;
+                    while (b[i++] != '<') ;       //移动当前数组指针，直到指向'<'
+                    String str = new String(b, i, 3);    //获取标签前三个字符，与二级标签集合对比
+                    //关联同一个art下面的year和title
+                    if (str.equals("art") || str.equals("inp") || str.equals("phd") || str.equals("pro") || str.equals("inc")) {
+                        //定位到title
+                        int p = i;
+                        while (b[p++] != '<' || b[p] != 't') ;
+                        while (b[p++] != '>') ;
+                        int j = 0;
+                        //j是记录内容长度的变量
+                        while (b[p + j++] != '<') ;
+                        //关联year和title
+                        int k = p + 1;
+                        //移动当前数组指针，直到指向'y'
+                        while (b[k++] != '<' || b[k] != 'y') ;
+                        while (b[k++] != '>') ;
+                        int year = Integer.parseInt(new String(b, k, 4));
+
+                        if (Util.yearSentence.get(year) != null) {
+                            Util.yearSentence.get(year).add(new String(b, p, j - 1));
+                        } else {
+                            ArrayList<String> temp = new ArrayList<String>();
+                            temp.add(new String(b, p, j - 1));
+                            Util.yearSentence.put(year, temp);
+                        }
+                    }
+                    recordPosition = curPosition + i - 1;      //设置解析到的当前记录的起始文件位置
+                    String endStr = "/" + str;           //获取当前记录的结束标签，后面判断匹配
+                    while (i <= 38990) {
+                        while (i <= 38990 && b[++i] != '<') ;
+                        str = new String(b, ++i, 3);
 
 
+                        if (str.equals("aut")) {
+
+                            while (b[i++] != '>') ;
+                            int j = 0;
+                            //j是记录内容长度的变量
+                            while (b[i + j++] != '<') ;
+                            //写入hashtable
+                            String authorName = new String(b, i, j - 1);
+                            if (Util.authorIndex.get(authorName) != null) {
+                                Util.authorIndex.get(authorName).add(recordPosition);
+                            } else {
+                                ArrayList<Long> temp = new ArrayList<Long>();
+                                temp.add(recordPosition);
+                                Util.authorIndex.put(authorName, temp);
+                            }
+                        }
+
+                        if (str.equals("tit")) {    //找到记录的title，写进hashtable
+                            //移动到标签的结尾部分
+                            while (b[i++] != '>') ;
+                            int j = 0;
+                            //j是记录内容长度的变量
+                            while (b[i + j++] != '<') ;
+                            //写入hashtable
+                            Util.titleIndex.put(new String(b, i, j - 1), recordPosition);
+                            //title只有一个 所以直接跳出循环
+                            break;
+                        }
+                    }
+                    while (i <= 38990) {
+                        while (i <= 38990 && b[i++] != '<') ;    //获取该条记录结束位置
+                        str = new String(b, i, 4);
+                        if (str.equals(endStr)) {
+                            break;
+                        }
+                    }
+                    curPosition = curPosition + i;   //从该条记录结束位置进行下一条记录解析
+                    if (curPosition == endPosition) {
+                        break;
+                    }
+                    randomAccessFile.seek(curPosition);
+
+
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                System.out.println(Thread.currentThread().getName() + ": 解析完成");
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
+
+
 }
+
 
 
