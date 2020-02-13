@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
-import static com.scut.utils.Util.YearWord;
 
 public class UtilsTest {
     public static void main(String[] args) throws Exception {
@@ -20,6 +19,5 @@ public class UtilsTest {
         properties.load(new FileInputStream("src\\com\\scut\\global.properties"));
         String fileName = properties.getProperty("data_location");
         Util.xmlParse(fileName);
-        Util.YearWord();
     }
 }

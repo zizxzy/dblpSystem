@@ -263,7 +263,7 @@ public class Util {
         try {
             long beginOutputTime =System.currentTimeMillis();
 			//读取
-            FileInputStream fileInputStream  = new FileInputStream("E:/javaDtLea/Top100Authors");
+            FileInputStream fileInputStream  = new FileInputStream("C:\\Users\\likesh\\Documents\\GitHub\\dblpSystem\\public\\Top100Authors");
             ObjectInputStream objectInputStream  = new ObjectInputStream(fileInputStream);
             Hashtable<String,Number> Top100Authors  = (Hashtable<String, Number>)objectInputStream.readObject();
             objectInputStream.close();
@@ -303,79 +303,120 @@ public class Util {
         }*/
         System.out.println("模糊查询得到的结果集有" + resultList.size() + "条");
         System.out.println("模糊查询需要的时间有:" + (System.currentTimeMillis() - searchBeginTime) + "ms");
+
+        //测试年度词汇分析
+        try {
+            long firstTime =System.currentTimeMillis();
+            FileInputStream fileInputStream  = new FileInputStream("C:\\Users\\likesh\\Documents\\GitHub\\dblpSystem\\public\\YearWords");
+            ObjectInputStream objectInputStream  = new ObjectInputStream(fileInputStream);
+            Hashtable<Integer, Hashtable<String,Integer>> words  = (Hashtable<Integer, Hashtable<String,Integer>>)objectInputStream.readObject();
+            objectInputStream.close();
+            Enumeration thisYear = words.keys();
+            while (thisYear.hasMoreElements()) {
+                int year = (Integer) thisYear.nextElement();
+                System.out.println("years:" + year);
+                Enumeration temp = words.get(year).keys();
+                while (temp.hasMoreElements()) {
+                    String word = (String) temp.nextElement();
+                    System.out.print("word:" + word + " ");
+                    System.out.println("count:" + words.get(year).get(word));
+                }
+            }
+            System.out.println("年度热词生成时间：" + (System.currentTimeMillis() - firstTime));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     //年度词汇分析
-    public static void YearWord() {
-        System.out.println(yearSentence.size());
-        long firstTime = System.currentTimeMillis();
-        Hashtable<Integer, Hashtable<String, Integer>> words = new Hashtable<>();
-        Enumeration years = yearSentence.keys();
-        while (years.hasMoreElements()) {
-            Hashtable<String, Integer> wordsCount = new Hashtable<String, Integer>();
-            int thisYear = (Integer) years.nextElement();
-            ArrayList<String> titles = yearSentence.get(thisYear);
-            //将所有单词都计次并放入wordsCount中
-            for (int i = 0; i < titles.size(); i++) {
-                //获得title
-                String title = titles.get(i);
-                //打散title
-                if (titles.get(i) == null) {
-                    continue;
-                }
-
-                StringTokenizer st = new StringTokenizer(title, " ,?.!:\"'\n#", false);
-                while (st.hasMoreElements()) {
-                    String word = st.nextToken().toLowerCase();
-                    if (Preposition.contains(word)) {
-                        continue;
-                    }
-                    if (wordsCount.containsKey(word)) {
-                        //记录加1
-                        wordsCount.put(word, wordsCount.get(word) + 1);
-                    } else {
-                        wordsCount.put(word, 1);
-                    }
-                }
-            }
-
-
-            //此年的年度词汇集合
-            Hashtable<String, Integer> tempTable = new Hashtable<>();
-            //选择出出现次数最多的前十个字符
-
-
-            for (int i = 0; i < 10; i++) {
-                int tempCount = 0;
-                String tempWord = "";
-                Enumeration word = wordsCount.keys();
-                while (word.hasMoreElements()) {
-                    String thisWord = (String) word.nextElement();
-                    int count = wordsCount.get(thisWord);
-                    if (count > tempCount) {
-                        tempCount = count;
-                        tempWord = thisWord;
-                    }
-                }
-                tempTable.put(tempWord, tempCount);
-                wordsCount.remove(tempWord);
-            }
-            words.put(thisYear, tempTable);
-        }
-        //测试代码
-        Enumeration thisYear = words.keys();
-        while (thisYear.hasMoreElements()) {
-            int year = (Integer) thisYear.nextElement();
-            System.out.println("years:" + year);
-            Enumeration temp = words.get(year).keys();
-            while (temp.hasMoreElements()) {
-                String word = (String) temp.nextElement();
-                System.out.print("word:" + word + " ");
-                System.out.println("count:" + words.get(year).get(word));
-            }
-        }
-        System.out.println("年度热词生成时间：" + (System.currentTimeMillis() - firstTime));
-    }
+//    public static void YearWord() {
+//        System.out.println(yearSentence.size());
+//        long firstTime = System.currentTimeMillis();
+//        Hashtable<Integer, Hashtable<String, Integer>> words = new Hashtable<>();
+//        Enumeration years = yearSentence.keys();
+//        while (years.hasMoreElements()) {
+//            Hashtable<String, Integer> wordsCount = new Hashtable<String, Integer>();
+//            int thisYear = (Integer) years.nextElement();
+//            ArrayList<String> titles = yearSentence.get(thisYear);
+//            //将所有单词都计次并放入wordsCount中
+//            for (int i = 0; i < titles.size(); i++) {
+//                //获得title
+//                String title = titles.get(i);
+//                //打散title
+//                if (titles.get(i) == null) {
+//                    continue;
+//                }
+//
+//                StringTokenizer st = new StringTokenizer(title, " ,?.!:\"'\n#", false);
+//                while (st.hasMoreElements()) {
+//                    String word = st.nextToken().toLowerCase();
+//                    if (Preposition.contains(word)) {
+//                        continue;
+//                    }
+//                    if (wordsCount.containsKey(word)) {
+//                        //记录加1
+//                        wordsCount.put(word, wordsCount.get(word) + 1);
+//                    } else {
+//                        wordsCount.put(word, 1);
+//                    }
+//                }
+//            }
+//
+//
+//            //此年的年度词汇集合
+//            Hashtable<String, Integer> tempTable = new Hashtable<>();
+//            //选择出出现次数最多的前十个字符
+//
+//
+//            for (int i = 0; i < 10; i++) {
+//                int tempCount = 0;
+//                String tempWord = "";
+//                Enumeration word = wordsCount.keys();
+//                while (word.hasMoreElements()) {
+//                    String thisWord = (String) word.nextElement();
+//                    int count = wordsCount.get(thisWord);
+//                    if (count > tempCount) {
+//                        tempCount = count;
+//                        tempWord = thisWord;
+//                    }
+//                }
+//                tempTable.put(tempWord, tempCount);
+//                wordsCount.remove(tempWord);
+//            }
+//            words.put(thisYear, tempTable);
+//        }
+    //持久化储存
+//        FileOutputStream fileOutputStream = null;
+//        try {
+//            fileOutputStream = new FileOutputStream("C:/java-project/YearWords");
+//
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+//            objectOutputStream.writeObject(words);
+//            objectOutputStream.close();
+//            //写入成功
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        //测试代码
+//        Enumeration thisYear = words.keys();
+//        while (thisYear.hasMoreElements()) {
+//            int year = (Integer) thisYear.nextElement();
+//            System.out.println("years:" + year);
+//            Enumeration temp = words.get(year).keys();
+//            while (temp.hasMoreElements()) {
+//                String word = (String) temp.nextElement();
+//                System.out.print("word:" + word + " ");
+//                System.out.println("count:" + words.get(year).get(word));
+//            }
+//        }
+//        System.out.println("年度热词生成时间：" + (System.currentTimeMillis() - firstTime));
+//    }
 
     private static class ParseXmlRunnable implements Runnable {
         private long beginPosition;
