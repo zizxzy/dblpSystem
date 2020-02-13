@@ -1,5 +1,6 @@
 package com.scut.utils;
 
+import com.scut.AhoCorasickDoubleArrayTrie.*;
 import org.ahocorasick.trie.Trie;
 
 import java.io.*;
@@ -128,8 +129,8 @@ public class Util {
         return stringLongHashtable;
     }
 
-    //多个字符（关键字）的部分搜索匹配，使用AC自动机
-    public static HashMap<String, Long> SearchTitleByKeywordByAc(String[] words, ConcurrentHashMap<String, Long> hashtable) {
+    //多个字符（关键字）的部分搜索匹配，使用AC自动机，有bug，还未去重判断
+/*    public static HashMap<String, Long> SearchTitleByKeywordByAc(String[] words, ConcurrentHashMap<String, Long> hashtable) {
         Trie trie = Trie.builder().onlyWholeWords().addKeywords(words).build();
         HashMap<String, Long> stringLongHashtable = new HashMap<String, Long>();
         Enumeration<String> keys = hashtable.keys();
@@ -143,7 +144,44 @@ public class Util {
         }
         //返回
         return stringLongHashtable;
+    }*/
+
+    //多个字符（关键字）的部分搜索匹配，使用AC自动机，使用双数组实现形式的AC自动机，实现的双数组AC自动机在src/com/scut/AhoCorasickDoubleArrayTrie包中
+    public static Hashtable<String, Long> SearchTitleByKeywordByDoubleArrayAc(String[] words, ConcurrentHashMap<String, Long> hashtable) {
+        //创建一颗双数组实现形式的AC自动机
+        AhoCorasickDoubleArrayTrie<String> acdat  = new AhoCorasickDoubleArrayTrie<String>();
+        TreeMap<String, String> map = new TreeMap<String, String>();
+        for (String key:words)
+        {
+            map.put(key,key);
+        }
+        //传入map参数 构建树
+        acdat.build(map);
+        Hashtable<String, Long> stringLongHashtable = new Hashtable<String, Long>();
+        Enumeration<String> keys = hashtable.keys();
+        //遍历title的Hashtable，并进行匹配
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
+            List<AhoCorasickDoubleArrayTrie.Hit<String>> hits = acdat.parseText(key);
+            //去重
+            for (int i = 0; i < hits.size(); i++) {
+                for (int j = hits.size() - 1; j > i; j--) {
+                    if (hits.get(i).value.equals(hits.get(j).value))
+                    {
+                        hits.remove(j);
+                    }
+
+                }
+            }
+            if (hits.size() == words.length) {
+                //放到新开的Hashtable中
+                stringLongHashtable.put(key, hashtable.get(key));
+            }
+        }
+        //返回
+        return stringLongHashtable;
     }
+
 
 
     public static void xmlParse(String p) throws Exception {
@@ -285,22 +323,19 @@ public class Util {
 
         //测试模糊查询
         long searchBeginTime = System.currentTimeMillis();
-        ArrayList<String> partialSearch = new ArrayList<String>();
-        //这里可以增加多个搜索的关键词
-        partialSearch.add("com");
-        partialSearch.add("deve");
         String[] strings = new String[3];
         strings[0] = "com";
         strings[1] = "deve";
         strings[2] = "and";
         //得到根据关键词搜索匹配出来的结果
-        HashMap<String, Long> resultList = Util.SearchTitleByKeywordByAc(strings, titleIndex);
+        Hashtable<String, Long> resultList = Util.SearchTitleByKeywordByDoubleArrayAc(strings, titleIndex);
         //遍历得到的结果列表
-        Set<String> keySet = resultList.keySet();
-        /*  while (keys1.hasMoreElements()) {
-            String key = (String) keys1.nextElement();
+        Enumeration<String> keys = resultList.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String) keys.nextElement();
             System.out.println("模糊查询的结果有" + key + " 偏移量是：" + resultList.get(key));
-        }*/
+        }
+        System.out.println("模糊查询得到的结果集有" + resultList.size() + "条");
         System.out.println("模糊查询得到的结果集有" + resultList.size() + "条");
         System.out.println("模糊查询需要的时间有:" + (System.currentTimeMillis() - searchBeginTime) + "ms");
 
@@ -454,8 +489,8 @@ public class Util {
                     i = 0;
                     while (b[i++] != '<') ;       //移动当前数组指针，直到指向'<'
                     String str = new String(b, i, 3);    //获取标签前三个字符，与二级标签集合对比
-                    //关联同一个art下面的year和title
-                    if (str.equals("art") || str.equals("inp") || str.equals("phd") || str.equals("pro") || str.equals("inc")) {
+                    //关联同一个art下面的year和title，这里的if语句可以先注释掉，只需要执行一次的if语句
+/*                    if (str.equals("art") || str.equals("inp") || str.equals("phd") || str.equals("pro") || str.equals("inc")) {
                         //定位到title
                         int p = i;
                         while (b[p++] != '<' || b[p] != 't') ;
@@ -477,7 +512,7 @@ public class Util {
                             temp.add(new String(b, p, j - 1));
                             Util.yearSentence.put(year, temp);
                         }
-                    }
+                    }*/
                     recordPosition = curPosition + i - 1;      //设置解析到的当前记录的起始文件位置
                     String endStr = "/" + str;           //获取当前记录的结束标签，后面判断匹配
                     while (i <= 38990) {
