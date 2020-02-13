@@ -245,7 +245,7 @@ public class Util {
         System.out.println("查询作者消耗时间：" + (System.currentTimeMillis() - bgSearchTime));
 
         //获取论文数量前100的作者
-        HashMap<String, Number> Top100Authors = new HashMap<String, Number>();
+        /*HashMap<String, Number> Top100Authors = new HashMap<String, Number>();
         //遍历得到的HashMap，键是作者名，值是链表的长度
         Enumeration<String> keys = authorIndex.keys();
         while (keys.hasMoreElements()) {
@@ -257,6 +257,29 @@ public class Util {
         //输出排序之后前100的值
         for (int i = 0; i < 100; i++) {
             System.out.println(set[i].getKey().toString() + ":" + set[i].getValue().toString());
+        }*/
+		
+		//测试持久化读取,要读取的文件在Top100Authors文件在项目目录/public下面
+        try {
+            long beginOutputTime =System.currentTimeMillis();
+			//读取
+            FileInputStream fileInputStream  = new FileInputStream("E:/javaDtLea/Top100Authors");
+            ObjectInputStream objectInputStream  = new ObjectInputStream(fileInputStream);
+            Hashtable<String,Number> Top100Authors  = (Hashtable<String, Number>)objectInputStream.readObject();
+            objectInputStream.close();
+			//遍历输出
+            Enumeration<String> keys = Top100Authors.keys();
+            while (keys.hasMoreElements()) {
+                String key = (String) keys.nextElement();
+                System.out.println(key+":"+Top100Authors.get(key));
+            }
+            System.out.println("消耗时间为"+(System.currentTimeMillis()-beginOutputTime)+"ms");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
 
