@@ -1,0 +1,18 @@
+{
+    "msg":"操作成功",
+    "code":"200",
+    "dataMap":{
+        "pageArticles":[
+            {"title":"A \"&#965;-Operation Free\" Approach to Pr&uuml;fer &#965;-Multiplication Domains.","locations":[],"records":null},
+            {"title":"A \"++decade\" of C++.","locations":[],"records":null},
+            {"title":"A \"Bag\" or a \"Window\" of Words for Information Filtering?.","locations":[],"records":null},
+            {"title":"A \"Ballet m&eacute;canique\" for the 21st Century: Performing George Antheil's Dadaist Masterpiece with Robots.","locations":[],"records":null},
+            {"title":"A \"Barber Pole\" Beacon for Mobile Robot Cooperation.","locations":[],"records":null},
+            {"title":"A \"Bare-Machine\" Implementation of Ada Multi-tasking Beneath the Linux Kernel.","locations":[],"records":null},
+            {"title":"A \"Best Current Practice\" for 3GPP-based cellular system security.","locations":[],"records":null},
+            {"title":"A \"Big-Ideas\" Computation Theory Course for the Undergraduate.","locations":[],"records":null},
+            {"title":"A \"Binary\" System for Complex Numbers.","locations":[],"records":null},
+            {"title":"A \"Black-and-White Box\" Approach to User Empowerment With Component Computing.","locations":[],"records":null}
+        ]
+    }
+}

@@ -1,0 +1,13 @@
+{"msg":"操作成功",
+"code":"200",
+"dataMap":{
+            "author":{
+                "name":"A Clara Kanmani",
+                "locations":[1283028509,1881330003],
+                "articles":["<www mdate=\"2017-11-29\" key=\"homepages/209/7491\">\n<author>A Clara Kanmani</author>\n<title>Home Page</title>\n</www>\n",
+                            "<inproceedings mdate=\"2017-11-29\" key=\"conf/ficta/KanmaniCG16\">\n<author>A Clara Kanmani</author>\n<author>T. Chockalingam</author>\n<author>N. Guruprasad</author>\n<title>An Exploratory Study of RDF: A Data Model for Cloud Computing.</title>\n<pages>641-649</pages>\n<year>2016</year>\n<booktitle>FICTA (2)</booktitle>\n<ee>https://doi.org/10.1007/978-981-10-3156-4_68</ee>\n<crossref>conf/ficta/2016-2</crossref>\n<url>db/conf/ficta/ficta2016-2.html#KanmaniCG16</url>\n</inproceedings>\n"],
+                "collaborators":["N. Guruprasad","A Clara Kanmani","T. Chockalingam"],
+                "articleNumber":2
+            }
+          }
+}
