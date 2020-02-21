@@ -347,7 +347,12 @@ public class RecordSearcher {
         boolean flag = false;
         while (i < len) {
             while (i < len && bytes[i++] != '<') ;
-            str = new String(bytes, i, 3);
+            try{
+                str = new String(bytes, i, 3);
+            }catch (Exception e){
+                e.printStackTrace();
+                System.out.println("[debug]searchCollaborators:" + record);
+            }
             if (leftTag.equals(str)) {
                 flag = true;
                 while (bytes[i++] != '>') ;

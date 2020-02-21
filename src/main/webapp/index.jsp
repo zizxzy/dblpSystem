@@ -32,5 +32,6 @@
 
 <h3><a href="article/toList">点击此处查看文章列表（JSON解析）</a></h3>
 <h3><a href="author/toList">点击此处查看作者列表（JSON解析）</a></h3>
+<h3><a href="author/toRankList">点击此处查看文章数作者排行（JSON解析）</a> </h3>
 </body>
 </html>

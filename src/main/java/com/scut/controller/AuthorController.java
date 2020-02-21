@@ -11,10 +11,7 @@ import com.yejh.bean.Author;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,6 +28,11 @@ public class AuthorController {
     @RequestMapping(value = "/toList")
     public String toAuthorList(){
         return "author_list";
+    }
+
+    @RequestMapping(value = "/toRankList")
+    public String toTopAuthorList(){
+        return "top_author_list";
     }
 
     @ResponseBody
@@ -52,6 +54,17 @@ public class AuthorController {
         if (author != null) {
             return InfoDTO.success().addData("author", author);
         } else {
+            return InfoDTO.fail();
+        }
+    }
+
+    @GetMapping(value = "top")
+    @ResponseBody
+    public InfoDTO getTopAuthors(){
+        List<Author> topAuthors = authorService.getTopAuthors();
+        if(topAuthors != null){
+            return InfoDTO.success().addData("topAuthors", topAuthors);
+        }else {
             return InfoDTO.fail();
         }
     }

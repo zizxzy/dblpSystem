@@ -16,4 +16,9 @@ public class AnnualHotWordRankingListGenerator implements RankingListGenerator {
     public List<Word> generateRankingList(int listSize) throws Exception {
         return null;
     }
+
+    @Override
+    public List<?> readRankingList() throws Exception {
+        return null;
+    }
 }

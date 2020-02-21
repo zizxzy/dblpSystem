@@ -5,11 +5,21 @@ package com.yejh.utils;/**
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @description: TODO
  **/
 public class TxtUtil {
+    private static List<Byte> delimiters;
+
+    static {
+        delimiters = new ArrayList<>(2);
+        delimiters.add((byte) '>');
+        delimiters.add((byte) ' ');
+    }
+
     public static String pairTrim(String str, char delimiter) {
         int len = str.length();
         int st = 0;
@@ -25,6 +35,18 @@ public class TxtUtil {
         return (del > 0) ? str.substring(del, str.length() - del) : str;
     }
 
+    //得到标签里的内容
+    public static String getContent(byte[] bytes, int pos){
+        int j = 0;
+        int len = bytes.length;
+        //System.out.println(new String(bytes));
+        while (pos + j < len  && !delimiters.contains(bytes[pos + j++]));
+        if(pos + j ==len){
+            return null;
+        }
+        return new String(bytes, pos, j-1);
+    }
+
     public static String getTag(String str) {
         String tag = str.substring(0, 1).toLowerCase();
         if (!tag.matches("[a-z]")) {
@@ -33,8 +55,8 @@ public class TxtUtil {
         return tag;
     }
 
-    private int get_tag_i(String tag) {
-        int tag_i = tag.charAt(0) - 'a';
+    public static int get_tag_i(String tag) {
+        int tag_i = getTag(tag).charAt(0) - 'a';
         if (tag_i < 0 || tag_i > 25) {
             tag_i = 26;
         }

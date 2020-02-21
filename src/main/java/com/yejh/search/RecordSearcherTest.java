@@ -41,7 +41,7 @@ public class RecordSearcherTest {
 
     @Test
     public void test() throws Exception {
-        String title = "\"Synchrony\" as a way to choose an interacting partner.";
+        String title = "The Value-Exploration of the Clinical Breast Diagnosis by Using Thermal Tomography.";
         //得到的location应该是189857193
         Article res = RecordSearcher.binarySearchByTitle(title);
         System.out.println(res);

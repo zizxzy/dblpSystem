@@ -16,6 +16,8 @@ import java.util.Set;
 public class Author {
     private String name;
 
+    private int articleNumber = -1;
+
     private List<Long> locations;
 
     private List<String> articles;
@@ -28,13 +30,27 @@ public class Author {
     public Author(String name, List<Long> locations) {
         this.name = name;
         this.locations = locations;
+        this.articleNumber = locations.size();
     }
 
-    public static Author initAuthor(String line){
+    public static Author initAuthor(String line, boolean readRank) {
+        if (!readRank) {
+            return initAuthor(line);
+        }
+        String[] split = line.split(", ");
+        String authorName = TxtUtil.pairTrim(split[0], '\"').trim();
+        int articleNumber = Integer.parseInt(split[1]);
+        Author author = new Author();
+        author.setName(authorName);
+        author.setArticleNumber(articleNumber);
+        return author;
+    }
+
+    public static Author initAuthor(String line) {
         String[] split = line.split(", ");
         String authorName = TxtUtil.pairTrim(split[0], '\"').trim();
         List<Long> longs = new ArrayList<>();
-        for(int i = 1; i < split.length; ++i){
+        for (int i = 1; i < split.length; ++i) {
             longs.add(Long.valueOf(split[i]));
         }
         return new Author(authorName, longs);
@@ -48,8 +64,12 @@ public class Author {
         this.name = name;
     }
 
-    public int getArticleNumber(){
-        return locations.size();
+    public int getArticleNumber() {
+        return this.articleNumber;
+    }
+
+    public void setArticleNumber(int articleNumber) {
+        this.articleNumber = articleNumber;
     }
 
     public List<Long> getLocations() {
@@ -76,11 +96,11 @@ public class Author {
         this.collaborators = collaborators;
     }
 
-    public void addCollaborators(Set<String> collaborators){
-        if(collaborators == null){
+    public void addCollaborators(Set<String> collaborators) {
+        if (collaborators == null) {
             return;
         }
-        if(this.collaborators == null){
+        if (this.collaborators == null) {
             this.collaborators = new HashSet<>(collaborators.size());
         }
         this.collaborators.addAll(collaborators);
@@ -91,7 +111,9 @@ public class Author {
     public String toString() {
         return "Author{" +
                 "name='" + name + '\'' +
+                ", articleNumber=" + articleNumber +
                 ", locations=" + locations +
+                ", collaborators=" + collaborators +
                 '}';
     }
 }

@@ -37,7 +37,7 @@ public class RecordLoader  {
         }
     }
 
-    public static Set<Author> loadAuthor() throws Exception{
+    public static Set<Author> loadAuthor() throws IOException{
         Set<Author> authors = new HashSet<>();
         for (String tag : tags){
             loadSingleFile(authors, tag);
@@ -45,7 +45,7 @@ public class RecordLoader  {
         return authors;
     }
 
-    private static void loadSingleFile(Set<Author> authors, String tag) throws Exception{
+    private static void loadSingleFile(Set<Author> authors, String tag) throws IOException{
         String fileName = authorIndexFileLocation + "//" + tag + ".csv";
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(fileName)));
         String line = null;

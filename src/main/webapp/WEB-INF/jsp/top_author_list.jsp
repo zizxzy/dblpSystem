@@ -1,10 +1,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}"/>
-
 <html>
 <head>
-    <title>Author List</title>
+    <title>Top Authors</title>
     <%--jquery--%>
     <script src="${ctx}/static/js/jquery-3.4.1.min.js"></script>
     <%--Bootstrap--%>
@@ -16,7 +15,7 @@
     <%--第一行 标题--%>
     <div class="row">
         <div class="col-md-12">
-            <h1>SCUT-科学文献管理系统-Author List</h1>
+            <h1>SCUT-科学文献管理系统-发表文章数作者排行</h1>
         </div>
     </div>
     <br/>
@@ -42,9 +41,9 @@
             <table class="table table-hover">
                 <thead>
                 <tr>
+                    <th>排名</th>
                     <th>作者</th>
                     <th>发表文章数</th>
-                    <th>在xml文件中的索引</th>
                     <th>操作</th>
                 </tr>
                 </thead>
@@ -64,12 +63,8 @@
 
 <jsp:include page="author_info.jsp"/>
 
-<h2><a href="${ctx}/author/json">测试</a></h2>
-
 
 <script>
-    var totalRecords; // 保存总记录数
-    var currentPage; // 保存当前页号
     <%--页面加载完成后，发起ajax请求，获取json数据--%>
     $(function () {
         ajax_to_page(1);
@@ -81,13 +76,10 @@
      */
     function ajax_to_page(pageNum) {
         $.ajax({
-            url: "${ctx}/author/json",
+            url: "${ctx}/author/top",
             type: "GET",
-            data: "pageNumber=" + pageNum,
             // result是服务器返回结果(InfoDTO对象)
             success: function (result) {
-                //totalRecords = result.dataMap.pageInfo.total;
-                currentPage = result.dataMap.pageNum;
                 // 1.解析并显示员工信息
                 build_authors_table(result);
                 // 2.解析并显示分页信息
@@ -107,30 +99,15 @@
         $("table tbody").empty();
 
         // 取出article列表
-        var authors = result.dataMap.pageAuthors;
+        var authors = result.dataMap.topAuthors;
         // 遍历集合author, 对于每一条记录，执行回调函数
         // 将每一条记录封装到一个tr中，添加到表格中
         $.each(authors,function (index,item) {
             // 每一个属性字段放在一个td里面
+            var rankTd = $("<td></td>").append(index+1);
             var nameTd = $("<td></td>").append(item.name);
             var articleNumberTd = $("<td></td>").append(item.articleNumber);
-            var locationsTd = $("<td></td>");
-            var locations = item.locations;
-            // alert("locations:" + locations);
-            // alert(locations.length);
-            $.each(locations, function (index, item) {
 
-                if(index >= 5){
-                    return;
-                }
-                locationsTd.append(item);
-                if(index < 4 && index < locations.length - 1){
-                    locationsTd.append(", ");
-                }
-                if(index === 4 && locations.length > 5){
-                    locationsTd.append("...");
-                }
-            });
             // <button class="btn btn-info btn-sm">
             //         <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
             //         查看详情
@@ -143,8 +120,8 @@
 
             // 所有td组成一个tr
             var operateTd = $("<td></td>").append(btnEdit);
-            var itemTr = $("<tr></tr>").append(nameTd).append(articleNumberTd)
-                .append(locationsTd).append(operateTd);
+            var itemTr = $("<tr></tr>").append(rankTd).append(nameTd)
+                .append(articleNumberTd).append(operateTd);
             // 将此tr加到table tbody里面
             itemTr.appendTo($("table tbody"));
         });
@@ -152,9 +129,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-

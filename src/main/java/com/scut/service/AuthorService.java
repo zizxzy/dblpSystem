@@ -5,10 +5,12 @@ package com.scut.service;/**
 
 import com.yejh.bean.Article;
 import com.yejh.bean.Author;
+import com.yejh.rank.AuthorRankingListGenerator;
 import com.yejh.search.RecordSearcher;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -36,5 +38,15 @@ public class AuthorService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Author> getTopAuthors() {
+        List<Author> authors = null;
+        try {
+            authors = new AuthorRankingListGenerator().readRankingList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return authors;
     }
 }

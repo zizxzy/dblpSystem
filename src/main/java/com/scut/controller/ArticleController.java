@@ -43,10 +43,10 @@ public class ArticleController {
         return InfoDTO.success().addData("pageNum", pageNumber).addData("pageArticles", articles);
     }
 
-    @GetMapping("/{authorName}")
+    @GetMapping("/{articleName}")
     @ResponseBody
-    public InfoDTO getArticleByName(@PathVariable("authorName") String authorName) {
-        Article article = articleService.getArticleByName(authorName);
+    public InfoDTO getArticleByName(@PathVariable("articleName") String articleName) {
+        Article article = articleService.getArticleByName(articleName);
         if (article != null) {
             return InfoDTO.success().addData("article", article);
         } else {

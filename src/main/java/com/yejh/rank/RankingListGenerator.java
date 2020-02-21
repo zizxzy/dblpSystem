@@ -22,4 +22,7 @@ public interface RankingListGenerator {
     * @Date: 2020/2/17 
     */ 
     List<?> generateRankingList(int listSize) throws Exception;
+
+    List<?> readRankingList() throws Exception;
+
 }

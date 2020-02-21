@@ -25,7 +25,7 @@
         <div class="col-md-12">
             <form action="${ctx}/author" method="post">
                 <div class="form-group">
-                    <label for="authorName">作者名称 Article name</label>
+                    <label for="authorName">作者名称 Author name</label>
                     <input type="text" name="authorName" class="form-control" id="authorName" placeholder="请输入作者名称">
                     <small id="emailHelp" class="form-text text-muted">
                         请输入完整作者名，否则可能无法匹配
@@ -89,7 +89,7 @@
                 //totalRecords = result.dataMap.pageInfo.total;
                 currentPage = result.dataMap.pageNum;
                 // 1.解析并显示员工信息
-                build_articles_table(result);
+                build_authors_table(result);
                 // 2.解析并显示分页信息
                 //build_page_info(result);
                 // 2.解析并显示导航信息
@@ -102,7 +102,7 @@
      * 将获取的json数据解析并显示到table员工信息部分
      * @param result
      */
-    function build_articles_table(result) {
+    function build_authors_table(result) {
         // 清空上一页的显示数据
         $("table tbody").empty();
 
