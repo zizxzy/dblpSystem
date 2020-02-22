@@ -65,6 +65,7 @@
 
 
 <script>
+
     <%--页面加载完成后，发起ajax请求，获取json数据--%>
     $(function () {
         ajax_to_page(1);

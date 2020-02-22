@@ -30,6 +30,7 @@
                     <small id="emailHelp" class="form-text text-muted">
                         请输入完整作者名，否则可能无法匹配
                         示例: Fritz Obermeyer
+                        <br/>目前暂不支持含除ASCII以外字符的作者名称查询
                     </small>
                 </div>
                 <button type="submit" class="btn btn-primary">提交</button>

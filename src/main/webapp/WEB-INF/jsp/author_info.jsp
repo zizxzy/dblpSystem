@@ -45,6 +45,13 @@
     </div>
 </div>
 <script>
+
+    function clearInfo(){
+        $("#author_name_static").text('');
+        $("#author_locations_static").text('');
+        $("#author_collaborators_static").text('');
+        $("#author_records_static").text('');
+    }
     /**
      * 查询指定id的员工信息并显示
      * @param empId
@@ -102,6 +109,7 @@
      * 遍历document的全部子孙节点，给所有具有.btn_edit的按钮绑定单击事件
      */
     $(document).on("click", ".btn_info", function () {
+        clearInfo();
         // alert("edit");
         // 2.查出当前员工信息并显示
         var author_name = $(this).attr("author_name");

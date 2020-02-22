@@ -39,6 +39,12 @@
     </div>
 </div>
 <script>
+    function clearInfo(){
+        $("#article_title_static").text('');
+        $("#article_locations_static").text('');
+        $("#article_records_static").text('');
+    }
+
     /**
      * 查询指定id的员工信息并显示
      * @param empId
@@ -93,6 +99,7 @@
      * 遍历document的全部子孙节点，给所有具有.btn_edit的按钮绑定单击事件
      */
     $(document).on("click", ".btn_info", function () {
+        clearInfo();
         // alert("edit");
         // 2.查出当前员工信息并显示
         var article_title = $(this).attr("article_title");
