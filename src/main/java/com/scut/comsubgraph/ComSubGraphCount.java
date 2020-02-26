@@ -1,38 +1,38 @@
 package comsubgraph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.*;
 
 /**
  * 统计各阶完全子图数量：
  * 1.构建基于链表的无向图邻接表
- * 2.while循环：（依次判断剩余度不为0的节点）
- * 找出包含此节点所有不重复的最大完全子图，其中度为0的节点统计为一阶完全子图的数量
- * 3.删除重复判断的完全子图，统计完成，释放资源
+ * 2.while循环：（依次判断剩余节点）
+ * 找出包含此节点所有不重复的最大完全子图
+ * 3.统计完成，释放资源
  */
 public class ComSubGraphCount {
     private String XMLPath;
     private ArrayList<ArrayList<Integer>> myMap;
     private ArrayList<Integer> subMax = new ArrayList<Integer>();
     private ArrayList<ArrayList<Integer>> subList = new ArrayList<ArrayList<Integer>>();
-    private int[] result = new int[300];
-    private LinkedHashMap<Integer, Integer> returnResult = new LinkedHashMap<Integer,Integer>();
+    private HashMap<Integer, HashMap<ArrayList<Integer>, Integer>> resultList =
+            new HashMap<Integer, HashMap<ArrayList<Integer>, Integer>>();
 
     ComSubGraphCount(String XMLPath) {
         this.XMLPath = XMLPath;
     }
 
-    public LinkedHashMap<Integer, Integer> countComSubGraph() {
+    public HashMap<Integer, HashMap<ArrayList<Integer>, Integer>> countComSubGraph() {
         //构建并获取整个合作关系图
         MyMap map = new MyMap(XMLPath);
         myMap = map.getMyMap();
-//        authorNameMap = map.getAuthorNameMap();
         int p = -1;
+        resultList.put(1, new HashMap<ArrayList<Integer>, Integer>());
         while (++p < myMap.size()) {
             //统计初始度为0的节点数目，即一阶子图数目
             if (myMap.get(p).size() == 0) {
-                result[0]++;
+                ArrayList<Integer> temp = new ArrayList<>();
+                temp.add(p);
+                resultList.get(1).put(temp, 0);
             } else if (myMap.get(p).size() >= 1) {
                 //找出包含此节点的所有完全子图，并纳入统计
                 countSubMax(p);
@@ -40,13 +40,6 @@ public class ComSubGraphCount {
                 if (p % 1000 == 0) {
                     System.out.println("执行到：  " + p);
                 }
-            }
-        }
-        //因为n阶子图被重读统计n次，所以需除以n
-        for (int j = 0; j < 300; j++) {
-            result[j] = result[j] / ((j + 1));
-            if (result[j] > 0) {
-                returnResult.put(j+1,result[j]);
             }
         }
 
@@ -57,7 +50,7 @@ public class ComSubGraphCount {
         System.gc();
 
         //返回结果
-        return returnResult;
+        return resultList;
     }
 
     //计算包含p节点的所有完全子图
@@ -89,10 +82,17 @@ public class ComSubGraphCount {
             Collections.sort(subMax);
             //已经存在的重复的完全子图则不纳入统计
             if (!subList.contains(subMax)) {
+                //判断resultList是否已经存在这个阶数
+                if (!resultList.containsKey(subMax.size())) {
+                    resultList.put(subMax.size(), new HashMap<ArrayList<Integer>, Integer>());
+                }
+                //判断resultList 对应阶数的Hashmap中是否已经存在，否则加入
+                //此处用hashmap而非arraylist是为了加快判断速度
+                if (!resultList.get(subMax.size()).containsKey(subMax)) {
+                    resultList.get(subMax.size()).put(subMax, 0);
+                }
                 subList.add(subMax);
-                result[subMax.size() - 1]++;
             }
         }
     }
-
 }
