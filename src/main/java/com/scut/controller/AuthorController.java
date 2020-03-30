@@ -26,21 +26,21 @@ public class AuthorController {
     private AuthorService authorService;
 
     @RequestMapping(value = "/toList")
-    public String toAuthorList(){
+    public String toAuthorList() {
         return "author_list";
     }
 
     @RequestMapping(value = "/toRankList")
-    public String toTopAuthorList(){
+    public String toTopAuthorList() {
         return "top_author_list";
     }
 
     @ResponseBody
     @RequestMapping("/json")
     public InfoDTO getAuthorsToJson(@RequestParam(value = "tag", defaultValue = "a") String tag,
-                                     @RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
-                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-                                     Model model) {
+                                    @RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+                                    @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                    Model model) {
 
         List<Author> authors = authorService.getPageAuthors(tag, pageNumber, pageSize);
         //System.out.println(articles);
@@ -49,8 +49,8 @@ public class AuthorController {
 
     @PostMapping()
     @ResponseBody
-    public InfoDTO getAuthorByNamePost(String authorName){
-        Author author = authorService.getAuthorByName(authorName,false);
+    public InfoDTO getAuthorByNamePost(String authorName) {
+        Author author = authorService.getAuthorByName(authorName, false);
         if (author != null) {
             return InfoDTO.success().addData("author", author);
         } else {
@@ -60,11 +60,11 @@ public class AuthorController {
 
     @GetMapping(value = "top")
     @ResponseBody
-    public InfoDTO getTopAuthors(){
+    public InfoDTO getTopAuthors() {
         List<Author> topAuthors = authorService.getTopAuthors();
-        if(topAuthors != null){
+        if (topAuthors != null) {
             return InfoDTO.success().addData("topAuthors", topAuthors);
-        }else {
+        } else {
             return InfoDTO.fail();
         }
     }

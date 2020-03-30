@@ -1,13 +1,18 @@
-package com.scut.service;/**
+package com.scut.service;
+ /*
  * @author yejh
  * @create 2020-02_17 21:07
  */
 
 import com.yejh.bean.Article;
+import com.yejh.funzzyquery.ArticleList_totalRecords;
+import com.yejh.funzzyquery.FuzzyQueryUtil;
 import com.yejh.search.RecordSearcher;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,9 +22,9 @@ import java.util.List;
 @Service
 public class ArticleService {
 
-    public Article getArticleByName(String articleName){
+    public Article getArticleByName(String articleName) {
         Article article = null;
-        try{
+        try {
             article = RecordSearcher.binarySearchByTitle(articleName);
         } catch (Exception e) {
             e.printStackTrace();
@@ -27,11 +32,43 @@ public class ArticleService {
         return article;
     }
 
-    public List<Article> getPageArticles(String tag, int pageNumber, int pageSize){
+    public List<Article> getPageArticles(String tag, int pageNumber, int pageSize) {
         try {
-           return RecordSearcher.getArticlesByTag(tag, pageNumber, pageSize);
-        }catch (FileNotFoundException e) {
+            return RecordSearcher.getArticlesByTag(tag, pageNumber, pageSize);
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 根据一页的条数、页号、关键字数组和刷新标记返回10条记录
+     * @param pageNumber 一页的条数
+     * @param pageSize   页号
+     * @param strs       关键字数组
+     * @param tag        刷新标记
+     * @return 长度为10的列表
+     */
+    public static ArticleList_totalRecords getPageArticlesByFuzzyQuery(Integer pageNumber, Integer pageSize, String[] strs, Boolean tag) {
+        System.out.println("success");
+        if (FuzzyQueryUtil.fuzzyQueryRes(strs, tag)) {
+            List<Article> articleList = new ArrayList<Article>();
+
+            List<Article> articleList1 = FuzzyQueryUtil.articleList;
+
+            if (articleList1.size() <= pageSize) {
+                return new ArticleList_totalRecords(articleList1, articleList1.size());
+            }
+            if ((pageNumber - 1) * pageSize < articleList1.size() && articleList1.size() < (pageNumber * pageSize)) {
+                for (int i = (pageNumber - 1) * pageSize; i < articleList1.size(); i++) {
+                    articleList.add(articleList1.get(i));
+                }
+            } else {
+                for (int i = (pageNumber - 1) * pageSize; i < pageNumber * pageSize; i++) {
+                    articleList.add(articleList1.get(i));
+                }
+            }
+            return new ArticleList_totalRecords(articleList, articleList1.size());
         }
         return null;
     }

@@ -3,7 +3,6 @@ package com.scut.controller;/**
  * @create 2020-02_07 13:46
  */
 
-import com.github.pagehelper.PageInfo;
 import com.scut.bean.InfoDTO;
 import com.scut.service.ArticleService;
 import com.yejh.bean.Article;
@@ -27,16 +26,16 @@ public class ArticleController {
     private ArticleService articleService;
 
     @RequestMapping(value = "/toList")
-    public String toArticleList(){
+    public String toArticleList() {
         return "article_list";
     }
 
     @ResponseBody
     @RequestMapping("/json")
     public InfoDTO getArticlesToJson(@RequestParam(value = "tag", defaultValue = "a") String tag,
-                                 @RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
-                                 @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-                                 Model model) {
+                                     @RequestParam(value = "pageNumber", defaultValue = "1") Integer pageNumber,
+                                     @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                     Model model) {
 
         List<Article> articles = articleService.getPageArticles(tag, pageNumber, pageSize);
         //System.out.println(articles);
@@ -56,7 +55,7 @@ public class ArticleController {
 
     @PostMapping()
     @ResponseBody
-    public InfoDTO getArticleByNamePost(String articleName){
+    public InfoDTO getArticleByNamePost(String articleName) {
         Article article = articleService.getArticleByName(articleName);
         if (article != null) {
             return InfoDTO.success().addData("article", article);

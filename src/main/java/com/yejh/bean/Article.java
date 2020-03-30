@@ -5,13 +5,14 @@ package com.yejh.bean;/**
 
 import com.yejh.utils.TxtUtil;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @description: TODO
  **/
-public class Article {
+public class Article implements Serializable {
     private String title;
 
     private List<Long> locations;

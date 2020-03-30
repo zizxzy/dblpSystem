@@ -28,10 +28,14 @@
     文章标题: <input type="text" name="articleName" value='A "Build-Down" Scheme for Linear Programming.'/>
     <input type="submit" value="查询文章"/>
 </form>
-<br/><br/>
+<br/>
+<br/>
 
 <h3><a href="article/toList">点击此处查看文章列表（JSON解析）</a></h3>
 <h3><a href="author/toList">点击此处查看作者列表（JSON解析）</a></h3>
 <h3><a href="author/toRankList">点击此处查看文章数作者排行（JSON解析）</a> </h3>
+<h3><a href="fuzzyQuery/toQueryPage">点击此处进行模糊查询</a></h3>
+<h3><a href="hotWords/toAnnulHotWords">点击此处查看年度热词表格</a></h3>
+<h3><a href="comSubGraph/toQuerySubGraph">点击此处进行查询k阶子图的详细信息</a></h3>
 </body>
 </html>
