@@ -1,14 +1,9 @@
-<<<<<<< Updated upstream
-package comsubgraph;
-
-=======
 package com.scut.comsubgraph;
 /* @author lss
  * @create 2020-02_26 12:00
  */
 import com.yejh.bean.ComSubGraph;
 import com.yejh.funzzyquery.ArticleList_totalRecords;
->>>>>>> Stashed changes
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -19,20 +14,13 @@ import java.util.*;
 
 public class ComSubGraphGetter {
     private static String indexFileLocation;
-<<<<<<< Updated upstream
-=======
     public static ComSubGraph comSubGraph = new ComSubGraph();
->>>>>>> Stashed changes
 
     static {
         Properties properties = new Properties();
         try {
             //从配置文件获取csv存放的目录路径
-<<<<<<< Updated upstream
-            properties.load(new FileInputStream("src//main//resources//config//global.properties"));
-=======
             properties.load(new FileInputStream("F://dblpSystem//src//main//resources//config//global.properties"));
->>>>>>> Stashed changes
             indexFileLocation = (String) properties.get("index_file_root");
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,26 +103,15 @@ public class ComSubGraphGetter {
 
 
     @Test
-<<<<<<< Updated upstream
-    private void test() {
-=======
     public void test() {
->>>>>>> Stashed changes
         long beginTime = System.currentTimeMillis();
         //获取统计结果
         LinkedHashMap<Integer, Integer> result = getComSubGraphCounts();
         for (Map.Entry<Integer, Integer> item : result.entrySet()) {
-<<<<<<< Updated upstream
-            System.out.println(item.getKey() + "阶子图的数量是" + item.getValue());
-        }
-        //获取各阶完全子图的相信顶点信息，即作者名，参数rank填需要获取的阶数，获取需要2-5秒的时间
-        ArrayList<ArrayList<String>> comSubGraphAuthors = getComSubGraphAuthors(7);
-=======
             System.out.println(item.getKey() /*+ "阶子图的数量是" + item.getValue()*/);
         }
         //获取各阶完全子图的相信顶点信息，即作者名，参数rank填需要获取的阶数，获取需要2-5秒的时间
         ArrayList<ArrayList<String>> comSubGraphAuthors = getComSubGraphAuthors(55);
->>>>>>> Stashed changes
         if (comSubGraphAuthors != null && !comSubGraphAuthors.isEmpty()) {
             for (ArrayList<String> comSubGraphAuthor : comSubGraphAuthors) {
                 System.out.println(comSubGraphAuthor);
@@ -142,8 +119,6 @@ public class ComSubGraphGetter {
         }
         System.out.println("所用时间：  " + (System.currentTimeMillis() - beginTime));
     }
-<<<<<<< Updated upstream
-=======
 
     private static ComSubGraph getComSubGraphsByPage(Integer pageNumber, Integer pageSize) {
         ArrayList<ArrayList<String>> articleList = new ArrayList<>();
@@ -189,5 +164,4 @@ public class ComSubGraphGetter {
         }
     }
 
->>>>>>> Stashed changes
 }
