@@ -1,12 +1,7 @@
-<<<<<<< Updated upstream
-package comsubgraph;
-
-=======
 package com.scut.comsubgraph;
 /* @author lss
  * @create 2020-02_26 12:00
  */
->>>>>>> Stashed changes
 import java.util.*;
 
 /**
