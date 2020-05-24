@@ -1,5 +1,5 @@
 package com.yejh.rank;
-/* 热词生成类
+/*
  * Created bylizeyu on 2020/3/29 15:40
  */
 
@@ -13,7 +13,7 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
- * @description: TODO
+ * 热词生成类
  **/
 public class AnnualHotWordRankingListGenerator {
     private static String rankFileLocation;

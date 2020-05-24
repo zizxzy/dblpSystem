@@ -1,4 +1,5 @@
-package com.yejh.search;/**
+package com.yejh.search;
+/**
  * @author yejh
  * @create 2020-02_17 15:26
  */
@@ -6,13 +7,12 @@ package com.yejh.search;/**
 import com.yejh.bean.Article;
 import com.yejh.bean.Author;
 import com.yejh.utils.TxtUtil;
-import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.*;
 
 /**
- * @description: TODO
+ * RecordSearcher类是记录搜索类，用于在索引文件上搜索记录
  **/
 public class RecordSearcher {
     private static String indexFileLocation;
@@ -20,13 +20,8 @@ public class RecordSearcher {
 
 
     static {
-        Properties properties = new Properties();
         try {
-            InputStream resourceAsStream = RecordSearcher.class.getClassLoader()
-                    .getResourceAsStream("config//global.properties");
-            System.out.println(resourceAsStream);
-            properties.load(resourceAsStream);
-            //properties.load(new FileInputStream("src//main//resources//config//global.properties"));
+            Properties properties = TxtUtil.getProperties();
             indexFileLocation = (String) properties.get("index_file_root");
             xmlFileLocation = (String) properties.get("xml_file_location");
         } catch (IOException e) {
@@ -34,7 +29,12 @@ public class RecordSearcher {
         }
     }
 
-    //二分查找文件记录
+    /**
+     * 根据 作者名/文章标题 二分查找索引记录
+     *
+     * @param nameToFind 作者名/文章标题
+     * @return 该行索引记录
+     */
     private static String binarySearchRecord(RandomAccessFile randomAccessFile, String nameToFind) throws IOException {
         if (nameToFind == null || "".equals(nameToFind)) {
             throw new RuntimeException("要查找的名称不能为空！");
@@ -98,6 +98,36 @@ public class RecordSearcher {
         return res;
     }
 
+    public static Author binarySearchByAuthor(String authorName) throws Exception {
+
+        return binarySearchByAuthor(authorName, false);
+    }
+
+
+    /**
+     * 基本搜索功能。输入完整的作者名，能展示该作者发表的所有论文信息。
+     * 由于索引文件中作者名称是有序的，所以采用二分搜索。时间复杂度为O(log n)
+     *
+     * @Param searchPaper：是否搜索他的论文记录，searchCollaborator：是否搜索他的合作者
+     */
+    public static Author binarySearchByAuthor(String authorName, boolean searchCollaborator) throws Exception {
+        Author author = null;
+        String fileName = getFileName(authorName);
+        if (fileName == null) {
+            return null;
+        }
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(fileName), "r");
+        String recordLine = binarySearchRecord(randomAccessFile, authorName);
+        if (recordLine == null || "".equals(recordLine)) {
+            return null;
+        }
+        author = Author.initAuthor(recordLine);
+        if (searchCollaborator) {
+            author = searchCollaboratorsByAuthor(author);
+        }
+        return author;
+    }
+
     //使用二分搜索来查询论文记录
     public static Article binarySearchByTitle(String title) throws IOException {
         if (title == null || "".equals(title)) {
@@ -127,7 +157,7 @@ public class RecordSearcher {
         randomAccessFile = new RandomAccessFile(new File(xmlFileLocation), "r");
         byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
 
-        for(Long location : locations){
+        for (Long location : locations) {
             randomAccessFile.seek(location);
             randomAccessFile.read(b);
 
@@ -136,6 +166,104 @@ public class RecordSearcher {
         }
 
         return article;
+    }
+
+    public static Author searchCollaboratorsByAuthor(Author author) throws IOException {
+        //逐个寻找author发表的论文
+        List<Long> locations = author.getLocations();
+        List<String> records = new ArrayList<>();
+        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(xmlFileLocation), "r");
+        byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
+
+        for (Long location : locations) {
+            randomAccessFile.seek(location);
+            randomAccessFile.read(b);
+
+            //搜索记录
+            String oneRecord = getOneRecord(b);
+            records.add(oneRecord);
+
+            //搜索文章标题
+            String articleName = searchArticleNameByRecord(oneRecord);
+
+            //搜索合作者
+            List<String> collaborators = searchCollaboratorsByRecord(oneRecord);
+            author.addCollaborators(articleName, collaborators);
+
+        }
+        author.setRecords(records);
+        return author;
+    }
+
+
+    protected static long toNextRecordHead(RandomAccessFile randomAccessFile, long position) throws IOException {
+        randomAccessFile.seek(position);
+        byte[] bytes = new byte[1024];
+        int read;
+        int offset = 0;
+        while ((read = randomAccessFile.read(bytes)) != -1) {
+            boolean flag = false;
+            for (int i = 0; i < bytes.length; ++i) {
+                if (bytes[i] == '\n') {
+                    flag = true;
+                    offset += i;
+                    break;
+                }
+            }
+            if (flag) {
+                break;
+            } else {
+                offset += bytes.length;
+            }
+        }
+        return position + offset + 1;
+    }
+
+
+    @Deprecated
+    public static Author searchByAuthor(String authorName, boolean searchCollaborator) throws Exception {
+        return searchByAuthor(authorName, true, searchCollaborator);
+    }
+
+    /**
+     * 基本搜索功能。输入完整的作者名，能展示该作者发表的所有论文信息。
+     *
+     * @Param searchPaper：是否搜索他的论文记录，searchCollaborator：是否搜索他的合作者
+     */
+    @Deprecated
+    public static Author searchByAuthor(String authorName, boolean searchPaper, boolean searchCollaborator) throws Exception {
+
+        Author author = null;
+        String fileName = getFileName(authorName);
+        if (fileName == null) {
+            return null;
+        }
+        Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(fileName)));
+
+        //3、一行行遍历文件，直到找到title或者到达文件末尾
+        String line = null;
+        while (scanner.hasNextLine()) {
+            line = scanner.nextLine();
+            author = Author.initAuthor(line);
+            if (authorName.equals(author.getName())) {
+                break;
+            }
+        }
+
+        //4、如果找到了，根据找到的location在dblp.xml中搜索对应的完整记录
+        if (author != null && authorName.equals(author.getName())) {
+            System.out.println("searchByAuthor(" + authorName + ")成功：" + author);
+            if (!searchPaper && !searchCollaborator) {
+                return author;
+            }
+
+            if (searchCollaborator) {
+                author = searchCollaboratorsByAuthor(author);
+            }
+        }
+
+        //5、返回记录
+        return author != null && authorName.equals(author.getName()) ? author : null;
     }
 
     //输入完整的论文的题目，能展示该论文的其他相关信息
@@ -172,7 +300,7 @@ public class RecordSearcher {
             RandomAccessFile randomAccessFile = new RandomAccessFile(new File(xmlFileLocation), "r");
             byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
 
-            for(Long location : locations){
+            for (Long location : locations) {
                 randomAccessFile.seek(location);
                 randomAccessFile.read(b);
 
@@ -185,159 +313,13 @@ public class RecordSearcher {
         return article != null && title.equals(article.getTitle()) ? article : null;
     }
 
-    public static Author binarySearchByAuthor(String authorName) throws Exception {
-
-        return binarySearchByAuthor(authorName, false);
-    }
-
-
     /**
-     * @Description: 基本搜索功能。输入完整的作者名，能展示该作者发表的所有论文信息。
-     * 由于索引文件中作者名称是有序的，所以采用二分搜索。时间复杂度为O(log n)
-     * @Param: searchPaper：是否搜索他的论文记录，searchCollaborator：是否搜索他的合作者
-     * @return:
-     * @Author: yejh
-     * @Date: 2020/2/17
+     * 根据记录寻找作者
      */
-    public static Author binarySearchByAuthor(String authorName, boolean searchCollaborator) throws Exception {
-        Author author = null;
-        String fileName = getFileName(authorName);
-        if (fileName == null) {
-            return null;
-        }
-        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(fileName), "r");
-        String recordLine = binarySearchRecord(randomAccessFile, authorName);
-        if (recordLine == null || "".equals(recordLine)) {
-            return null;
-        }
-        author = Author.initAuthor(recordLine);
-        if (searchCollaborator) {
-            author = searchCollaboratorsByAuthor(author);
-        }
-        return author;
-    }
-
-    public static Author searchCollaboratorsByAuthor(Author author) throws IOException {
-        //逐个寻找author发表的论文
-        List<Long> locations = author.getLocations();
-        List<String> articles = new ArrayList<>();
-        RandomAccessFile randomAccessFile = new RandomAccessFile(new File(xmlFileLocation), "r");
-        byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
-
-        for (Long location : locations) {
-            randomAccessFile.seek(location);
-            randomAccessFile.read(b);
-
-            //搜索记录
-            String oneRecord = getOneRecord(b);
-            articles.add(oneRecord);
-
-            //搜索合作者
-            Set<String> collaborators = searchCollaborators(oneRecord);
-            author.addCollaborators(collaborators);
-
-        }
-        author.setArticles(articles);
-        return author;
-    }
-
-
-    protected static long toNextRecordHead(RandomAccessFile randomAccessFile, long position) throws IOException {
-        randomAccessFile.seek(position);
-        byte[] bytes = new byte[1024];
-        int read;
-        int offset = 0;
-        while ((read = randomAccessFile.read(bytes)) != -1) {
-            boolean flag = false;
-            for (int i = 0; i < bytes.length; ++i) {
-                if (bytes[i] == '\n') {
-                    flag = true;
-                    offset += i;
-                    break;
-                }
-            }
-            if (flag) {
-                break;
-            } else {
-                offset += bytes.length;
-            }
-        }
-        return position + offset + 1;
-    }
-
-
-    @Deprecated
-    public static Author searchByAuthor(String authorName, boolean searchCollaborator) throws Exception {
-        return searchByAuthor(authorName, true, searchCollaborator);
-    }
-
-    /**
-     * @Description: 基本搜索功能。输入完整的作者名，能展示该作者发表的所有论文信息。
-     * @Param: searchPaper：是否搜索他的论文记录，searchCollaborator：是否搜索他的合作者
-     * @return:
-     * @Author: yejh
-     * @Date: 2020/2/17
-     */
-    @Deprecated
-    public static Author searchByAuthor(String authorName, boolean searchPaper, boolean searchCollaborator) throws Exception {
-
-        Author author = null;
-        String fileName = getFileName(authorName);
-        if (fileName == null) {
-            return null;
-        }
-        Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(fileName)));
-
-        //3、一行行遍历文件，直到找到title或者到达文件末尾
-        String line = null;
-        while (scanner.hasNextLine()) {
-            line = scanner.nextLine();
-            author = Author.initAuthor(line);
-            if (authorName.equals(author.getName())) {
-                break;
-            }
-        }
-
-        //4、如果找到了，根据找到的location在dblp.xml中搜索对应的完整记录
-        if (author != null && authorName.equals(author.getName())) {
-            System.out.println("searchByAuthor(" + authorName + ")成功：" + author);
-            if (!searchPaper && !searchCollaborator) {
-                return author;
-            }
-
-            //逐个寻找author发表的论文
-            List<Long> locations = author.getLocations();
-            List<String> articles = new ArrayList<>();
-            RandomAccessFile randomAccessFile = new RandomAccessFile(new File(xmlFileLocation), "r");
-            byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
-
-            for (Long location : locations) {
-                randomAccessFile.seek(location);
-                randomAccessFile.read(b);
-
-                //搜索记录
-                String oneRecord = getOneRecord(b);
-                articles.add(oneRecord);
-
-                if (searchCollaborator) {
-                    //搜索合作者
-                    Set<String> collaborators = searchCollaborators(oneRecord);
-                    author.addCollaborators(collaborators);
-                }
-            }
-            author.setArticles(articles);
-        }
-
-        //5、返回记录
-        return author != null && authorName.equals(author.getName()) ? author : null;
-    }
-
-
-    //相关搜索。输入作者名，能展示于该作者有合作关系的其他所有作者。
-    public static Set<String> searchCollaborators(String record) {
+    public static List<String> searchCollaboratorsByRecord(String record) {
         String leftTag = "aut";
         //String rightTag = "/aut";
-        Set<String> collaborators = new HashSet<>();
+        List<String> collaborators = new ArrayList<>();
 
         int i = 5;
         byte[] bytes = record.getBytes();
@@ -347,9 +329,9 @@ public class RecordSearcher {
         boolean flag = false;
         while (i < len) {
             while (i < len && bytes[i++] != '<') ;
-            try{
+            try {
                 str = new String(bytes, i, 3);
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("[debug]searchCollaborators:" + record);
             }
@@ -371,13 +353,41 @@ public class RecordSearcher {
         return collaborators;
     }
 
+    /**
+     * 根据记录寻找文章标题
+     */
+    public static String searchArticleNameByRecord(String record) {
+        String leftTag = "tit";
+        int i = 5;
+        byte[] bytes = record.getBytes();
+        int len = bytes.length;
+        String str = null;
+        while (i < len) {
+            while (i < len && bytes[i++] != '<') ;
+            try {
+                str = new String(bytes, i, 3);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("[debug]searchArticleNameByRecord:\n" + record);
+            }
+            if (leftTag.equals(str)) {
+                while (bytes[i++] != '>') ;
+                int j = 0;
+                //j是记录内容长度的变量
+                while (bytes[i + j++] != '<') ;
+                return new String(bytes, i, j - 1).trim();
+            }
+        }
+        return null;
+    }
+
     //返回该tag对应的文件中前size条标题索引
     public static List<Article> getArticlesByTag(String tag, int pageNumber, int pageSize) throws FileNotFoundException {
         if (tag == null || "".equals(tag)) {
             return null;
         }
         List<Article> articles = new ArrayList<>();
-        int start = (pageNumber-1)*pageSize;
+        int start = (pageNumber - 1) * pageSize;
 
         //根据tag找文件
         String fileName = indexFileLocation + "//title//" + tag + ".csv";
@@ -389,7 +399,7 @@ public class RecordSearcher {
             scanner.nextLine();
             ++i;
         }
-        while (scanner.hasNextLine() && i < start + pageSize){
+        while (scanner.hasNextLine() && i < start + pageSize) {
             articles.add(Article.initArticle(scanner.nextLine()));
             ++i;
         }
@@ -402,7 +412,7 @@ public class RecordSearcher {
             return null;
         }
         List<Author> authors = new ArrayList<>();
-        int start = (pageNumber-1)*pageSize;
+        int start = (pageNumber - 1) * pageSize;
 
         //根据tag找文件
         String fileName = indexFileLocation + "//author//" + tag + ".csv";
@@ -414,7 +424,7 @@ public class RecordSearcher {
             scanner.nextLine();
             ++i;
         }
-        while (scanner.hasNextLine() && i < start + pageSize){
+        while (scanner.hasNextLine() && i < start + pageSize) {
             authors.add(Author.initAuthor(scanner.nextLine()));
             ++i;
         }

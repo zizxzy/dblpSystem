@@ -2,13 +2,13 @@ package com.scut.bean;
 
 import java.util.List;
 
-public class Parms{
+public class Params{
     private Number pageNumber;
     private Number pageSize;
     private List<String> list;
     private Boolean tag;
 
-    public Parms(Integer pageNumber, Integer pageSize, List<String> list, Boolean tag) {
+    public Params(Integer pageNumber, Integer pageSize, List<String> list, Boolean tag) {
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
         this.list = list;

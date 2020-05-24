@@ -9,6 +9,7 @@
     <context:component-scan base-package="com.yejh">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
+
     <context:component-scan base-package="com.scut">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>

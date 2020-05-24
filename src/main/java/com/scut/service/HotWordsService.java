@@ -1,6 +1,6 @@
 package com.scut.service;/*
  * Created by lizeyu on 2020/3/29 0:30
- * 每年热词service类
+ *
  */
 
 import com.yejh.bean.Word;
@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.util.*;
 
+/**
+ * 每年热词service类
+ */
 public class HotWordsService {
     /**
      * 获取每年热词

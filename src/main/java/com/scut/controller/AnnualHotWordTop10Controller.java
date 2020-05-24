@@ -1,28 +1,20 @@
 package com.scut.controller;
  /*
  * Created by lizeyu on 2020/3/29 0:11
- * 根据url返回每年热词结果的controller类
  */
 
 
-import com.github.pagehelper.PageInfo;
 import com.scut.bean.InfoDTO;
 import com.scut.service.HotWordsService;
 
 import com.yejh.bean.Word;
-import com.yejh.bean.Author;
-import com.yejh.funzzyquery.ArticleList_totalRecords;
-import com.yejh.search.RecordSearcher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 /**
- * @description: TODO
+ * 根据url返回每年热词结果的controller类
  **/
 
 @Controller

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * @description: TODO
+ * RecordLoader类用于加载 dblp_index//author 中的索引文件
  **/
 public class RecordLoader  {
     private static String authorIndexFileLocation;
@@ -22,9 +22,8 @@ public class RecordLoader  {
     private static String[] tags;
 
     static {
-        Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream("src//main//resources//config//global.properties"));
+            Properties properties = TxtUtil.getProperties();
             authorIndexFileLocation = (String) properties.get("index_file_root") + "//author";
             fileNames = new String[27];
             tags = new String[27];
@@ -37,6 +36,10 @@ public class RecordLoader  {
         }
     }
 
+    /**
+     * 加载所有位于 dblp_index\\author 文件夹下的文件，把每一行记录封装为一个Author对象
+     * @return 所有的author对象的Set集合
+     */
     public static Set<Author> loadAuthor() throws IOException{
         Set<Author> authors = new HashSet<>();
         for (String tag : tags){

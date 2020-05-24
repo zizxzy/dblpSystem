@@ -1,10 +1,11 @@
-package com.yejh.xmlparse;/**
+package com.yejh.xmlparse.impl;/**
  * @author yejh
  * @create 2020-02_16 14:00
  */
 
 import com.yejh.indexinit.IndexInitializer;
 import com.yejh.utils.TxtUtil;
+import com.yejh.xmlparse.XmlParser;
 
 import java.io.*;
 import java.nio.IntBuffer;
@@ -12,15 +13,15 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @description: TODO
+ * IndexXmlParser用于解析dblp.xml文件，生成索引文件
  **/
-public class XmlParseRunnable implements Runnable {
+public class IndexXmlParser implements XmlParser {
     //数组不支持泛型
     private static Map<String, List<Long>>[] authorIndex = new HashMap[27];
     private static Map<String, Long>[] titleIndex = new HashMap[27];
 
     private IndexInitializer indexInitializer;
-    private Boolean writeToFile;
+    private Boolean writeToFile = true;
 
     private static String xmlFileLocation;
     private static int batch;
@@ -30,9 +31,8 @@ public class XmlParseRunnable implements Runnable {
             authorIndex[i] = new HashMap<>();
             titleIndex[i] = new HashMap<>();
         }
-        Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream("src//main//resources//config//global.properties"));
+            Properties properties = TxtUtil.getProperties();
             xmlFileLocation = (String) properties.get("xml_file_location");
             batch = Integer.parseInt((String) properties.get("batch"));
         } catch (IOException e) {
@@ -50,6 +50,9 @@ public class XmlParseRunnable implements Runnable {
         this.writeToFile = true;
     }
 
+    /**
+     * 写索引文件
+     */
     private void writeIndex() throws Exception {
         for (int t = 0; t < 27; ++t) {
             String tag = String.valueOf((char) (t + 'a'));

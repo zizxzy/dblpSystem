@@ -4,17 +4,16 @@ package com.yejh.xmlparse;/**
  */
 
 import com.yejh.indexinit.IndexInitializer;
-import com.yejh.utils.TxtUtil;
+import com.yejh.xmlparse.impl.IndexXmlParser;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
-import java.util.HashMap;
 import java.util.Properties;
 
 /**
  * @description: TODO
  **/
-public class XmlParseTest {
+public class XmlParserTest {
 
     private static String xmlFileLocation;
 
@@ -29,10 +28,10 @@ public class XmlParseTest {
     }
 
     public static void main(String[] args) {
-        XmlParseRunnable xmlParseRunnable = new XmlParseRunnable();
-        xmlParseRunnable.setIndexInitializer(new IndexInitializer());
+        IndexXmlParser indexXmlParser = new IndexXmlParser();
+        indexXmlParser.setIndexInitializer(new IndexInitializer());
 
-        xmlParseRunnable.run();
+        indexXmlParser.run();
     }
 
     //[debug]cur: 77630678, i=540, j=3557

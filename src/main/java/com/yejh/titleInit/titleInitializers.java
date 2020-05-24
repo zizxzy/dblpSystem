@@ -1,10 +1,17 @@
 package com.yejh.titleInit;
+
 import com.yejh.utils.TxtUtil;
 import com.yejh.AhoCorasickDoubleArrayTrie.*;
 
 import java.io.*;
 import java.util.*;
-public class titleInitalizers implements Runnable {
+
+/**
+ * 旧文件，已被废弃
+ */
+
+@Deprecated
+public class titleInitializers implements Runnable {
     private  static  String  xmlFileLocation;
     private static int batch;
     private static HashMap<String,ArrayList<Long>> stringArrayListHashMap = new HashMap<>();
@@ -116,7 +123,6 @@ public class titleInitalizers implements Runnable {
                             System.out.println("title为空串: " + record);
                             break;
                         }
-
 
                         //写入hashmap，curPosition一直到最后才更新
                         initListByStrAndLocation(titleName,curPosition);

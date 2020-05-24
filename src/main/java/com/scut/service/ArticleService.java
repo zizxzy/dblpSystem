@@ -11,17 +11,19 @@ import com.yejh.search.RecordSearcher;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @description: TODO
+ * ArticleService类
  **/
 
 @Service
 public class ArticleService {
 
+    /**
+     * 根据文章名获取文章记录Article
+     */
     public Article getArticleByName(String articleName) {
         Article article = null;
         try {
@@ -32,6 +34,9 @@ public class ArticleService {
         return article;
     }
 
+    /**
+     * 获取Articles分页数据
+     */
     public List<Article> getPageArticles(String tag, int pageNumber, int pageSize) {
         try {
             return RecordSearcher.getArticlesByTag(tag, pageNumber, pageSize);

@@ -11,11 +11,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 /**
- * @description: TODO
+ * RecordSearcherTest类用于测试RecordSearcher类的功能和性能
  **/
 public class RecordSearcherTest {
 
@@ -83,7 +85,7 @@ public class RecordSearcherTest {
 //            System.out.println("==========================");
 //        }
 
-        Set<String> collaborators = author.getCollaborators();
+        Map<String, List<String>> collaborators = author.getCollaborators();
         System.out.println("合作者如下：");
         System.out.println(collaborators);
 
@@ -113,7 +115,7 @@ public class RecordSearcherTest {
     }
 
     @Test
-    public void test5() throws Exception {
+    public void testBinarySearchByAuthor() throws Exception {
 
         Author author = RecordSearcher.binarySearchByAuthor("Toshihiro Osaragi", true);
         System.out.println(author);
@@ -123,14 +125,15 @@ public class RecordSearcherTest {
         if(author.getCollaborators()!=null){
             System.out.println("=============================");
             System.out.println("合作者如下");
-            for(String a : author.getCollaborators()){
-                System.out.println(a);
+            Map<String, List<String>> collaborators = author.getCollaborators();
+            for(String a : collaborators.keySet()){
+                System.out.println(a + ": " + collaborators.get(a));
             }
         }
-        if(author.getArticles() != null){
+        if(author.getRecords() != null){
             System.out.println("=============================");
             System.out.println("记录如下");
-            for(String a : author.getArticles()){
+            for(String a : author.getRecords()){
                 System.out.println(a);
             }
         }

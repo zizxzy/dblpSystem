@@ -5,10 +5,7 @@ package com.yejh.bean;/**
 
 import com.yejh.utils.TxtUtil;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @description: TODO
@@ -20,9 +17,9 @@ public class Author {
 
     private List<Long> locations;
 
-    private List<String> articles;
+    private List<String> records;
 
-    private Set<String> collaborators;
+    private Map<String, List<String>> collaborators;
 
     public Author() {
     }
@@ -80,30 +77,30 @@ public class Author {
         this.locations = locations;
     }
 
-    public List<String> getArticles() {
-        return articles;
+    public List<String> getRecords() {
+        return records;
     }
 
-    public void setArticles(List<String> articles) {
-        this.articles = articles;
+    public void setRecords(List<String> records) {
+        this.records = records;
     }
 
-    public Set<String> getCollaborators() {
+    public Map<String, List<String>> getCollaborators() {
         return collaborators;
     }
 
-    public void setCollaborators(Set<String> collaborators) {
+    public void setCollaborators(Map<String, List<String>> collaborators) {
         this.collaborators = collaborators;
     }
 
-    public void addCollaborators(Set<String> collaborators) {
+    public void addCollaborators( String articleName, List<String> collaborators) {
         if (collaborators == null) {
             return;
         }
         if (this.collaborators == null) {
-            this.collaborators = new HashSet<>(collaborators.size());
+            this.collaborators = new HashMap<>(collaborators.size());
         }
-        this.collaborators.addAll(collaborators);
+        this.collaborators.put(articleName, collaborators);
         //System.out.println("debug: " + collaborators);
     }
 

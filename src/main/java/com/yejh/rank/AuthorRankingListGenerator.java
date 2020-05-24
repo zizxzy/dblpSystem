@@ -12,7 +12,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description: TODO
+ * AuthorRankingListGenerator类用于生成发表数前100的作者排行榜
  **/
 public class AuthorRankingListGenerator implements RankingListGenerator {
     private static String rankFileLocation;
@@ -31,6 +31,13 @@ public class AuthorRankingListGenerator implements RankingListGenerator {
         }
     }
 
+    /**
+     * 生成排行榜文件
+     * 注意！！此方法仅用于生成排行榜文件，不会被controller调用
+     *
+     * @Param: 排行榜大小
+     * @return: Map的key为作者Author，value是文章数目
+     */
     @Override
     public List<Author> generateRankingList(int listSize) throws IOException {
         List<Author> top = new ArrayList<>(listSize);
@@ -52,6 +59,9 @@ public class AuthorRankingListGenerator implements RankingListGenerator {
         return top;
     }
 
+    /**
+     * 读取排行榜文件
+     */
     @Override
     public List<Author> readRankingList() throws IOException {
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(rankFileLocation)));
@@ -75,9 +85,9 @@ public class AuthorRankingListGenerator implements RankingListGenerator {
     }
 
     @Test
-    public void test2() throws IOException{
+    public void test2() throws IOException {
         List<?> list = readRankingList();
-        for(Object author : list){
+        for (Object author : list) {
             System.out.println(author);
         }
     }

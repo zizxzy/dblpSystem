@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * @description: TODO
+ * IndexInitializer类用于直接写入索引文件
  **/
 public class IndexInitializer {
 

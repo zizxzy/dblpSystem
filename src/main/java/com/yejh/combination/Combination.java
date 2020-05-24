@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * @description: 作用于由XmlParseRunnable类产生的author文件
+ * Combination类作用于由XmlParseRunnable类产生的author文件
  * 由于author文件中相同作者的记录通常会有多条，所以需要把相同作者的记录合并在一起，从而使得检索更方便
  **/
 public class Combination {

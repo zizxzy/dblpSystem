@@ -1,15 +1,15 @@
 package com.yejh.titleInit;
 
 import com.yejh.bean.Article;
-import com.yejh.funzzyquery.FuzzyQueryUtil;
 import com.yejh.search.RecordSearcher;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+
+
 
 public class titleInitializer {
     private static String indexFileLocation;

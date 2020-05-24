@@ -1,4 +1,5 @@
-package com.scut.controller;/*
+package com.scut.controller;
+/*
  * Created by lizeyu on 2020/3/29 15:45
  */
 
@@ -9,16 +10,17 @@ import com.yejh.titleInit.titleInitializer;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * @description: TODO
+ * ComSubGraphController类用于接收comSubGraph请求
  **/
 
 @Controller
 @RequestMapping(value = "/comSubGraph")
-public class ComSubGraphs {
+public class ComSubGraphController {
 
     @RequestMapping(value = "/toQuerySubGraph")
     public String toQuerySubGraph() {
@@ -27,19 +29,20 @@ public class ComSubGraphs {
 
     @RequestMapping(value = "/json", method = RequestMethod.POST)
     @ResponseBody
-    public InfoDTO getQuerySubGraph(@RequestBody Map params) {
+    public InfoDTO getQuerySubGraph(@RequestBody Map<String, Object> params) {
         Integer k = Integer.parseInt(params.get("number").toString());
-        ComSubGraph comSubGraph = ComSubGraphGetter.getSubComGraphs((Integer) params.get("pageNum"), (Integer) params.get("pageSize"), (Boolean) params.get("tag"), k);
+        ComSubGraph comSubGraph = ComSubGraphGetter.getSubComGraphs((Integer) params.get("pageNum"),
+                (Integer) params.get("pageSize"), (Boolean) params.get("tag"), k);
         return InfoDTO.success().addData("comSubGraph", comSubGraph).addData("num", k);
     }
 
     @RequestMapping(value = "/init", method = RequestMethod.POST)
     @ResponseBody
-    public InfoDTO initTitle(@RequestBody Map map) {
-        LinkedHashMap<Integer, Integer> comSubGraphCounts = ComSubGraphGetter.getComSubGraphCounts();
-        if (comSubGraphCounts!=null){
-            return InfoDTO.success().addData("comSubGraphCounts",comSubGraphCounts);
-        }else {
+    public InfoDTO initTitle(@RequestBody Map<String, Object> map) {
+        HashMap<Integer, Integer> comSubGraphCounts = ComSubGraphGetter.getComSubGraphCounts();
+        if (comSubGraphCounts != null) {
+            return InfoDTO.success().addData("comSubGraphCounts", comSubGraphCounts);
+        } else {
             return InfoDTO.fail();
         }
     }

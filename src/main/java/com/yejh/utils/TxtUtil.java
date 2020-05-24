@@ -3,13 +3,17 @@ package com.yejh.utils;/**
  * @create 2020-02_17 15:01
  */
 
+import com.scut.comsubgraph.ComSubGraphGetter;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
- * @description: TODO
+ * TxtUtil类是一个处理字符串的工具类
  **/
 public class TxtUtil {
     private static List<Byte> delimiters;
@@ -91,5 +95,13 @@ public class TxtUtil {
         }
         while (bytes[--end] != '\"') ;
         return new String(bytes, 1, end - 1);
+    }
+
+    public static Properties getProperties() throws IOException {
+        Properties properties = new Properties();
+        InputStream resourceAsStream = ComSubGraphGetter.class.getClassLoader()
+                .getResourceAsStream("config//global.properties");
+        properties.load(resourceAsStream);
+        return properties;
     }
 }

@@ -1,8 +1,8 @@
 package com.scut.controller;
 /*
  * Created by lizeyu on 2020/3/28 12:23
- * 根据url返回每年模糊查询的结果
  */
+
 import com.scut.bean.InfoDTO;
 import com.scut.service.ArticleService;
 import com.yejh.bean.Article;
@@ -18,9 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @description: TODO
+ * 根据url返回每年模糊查询的结果
  **/
-
 
 @Controller
 @RequestMapping(value = "/fuzzyQuery")
@@ -35,7 +34,7 @@ public class FuzzyQueryController {
 
     @RequestMapping(value = "/json", method = RequestMethod.POST)
     @ResponseBody
-    public InfoDTO getQueryArticleToJson(@RequestBody Map parms) {
+    public InfoDTO getQueryArticleToJson(@RequestBody Map<String, Object> parms) {
         ArrayList<String> arrayList = (ArrayList<String>) parms.get("queryArray");
         String[] strs = new String[arrayList.size()];
         for (int i = 0; i < arrayList.size(); i++) {
@@ -47,14 +46,16 @@ public class FuzzyQueryController {
         int totalRecords = articleList_totalRecords.getTotalRecords();
         return InfoDTO.success().addData("pageNum", parms.get("pageNumber")).addData("pageArticles", articles).addData("totalRecords", totalRecords);
     }
-    /**初始化title列表，提高模糊查询速度
+
+    /**
+     * 初始化title列表，提高模糊查询速度
      *
      * @param map 参数map
      * @return 返回一个InfoDTO对象
      */
     @RequestMapping(value = "/init", method = RequestMethod.POST)
     @ResponseBody
-    public InfoDTO initTitle(@RequestBody Map map) {
+    public InfoDTO initTitle(@RequestBody Map<String, Object> map) {
         titleInitializer titleInitializer1 = new titleInitializer();
         if (titleInitializer1.titleInit()) {
             return InfoDTO.success().addData("msg", new String("success"));
