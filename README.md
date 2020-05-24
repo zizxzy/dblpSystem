@@ -1,7 +1,7 @@
 # dblpSystem
 
 ## 特别注意事项
-- 项目根目录/src/main/java/com/scut/comsubgraph/ComSubGraphGetter.java下的第21行情修改为自己项目中的global.properties的绝对路径，不然会报错无法运行
+- 【已修复】项目根目录/src/main/java/com/scut/comsubgraph/ComSubGraphGetter.java下的第21行情修改为自己项目中的global.properties的绝对路径，不然会报错无法运行
 - 项目运行需要的所有索引文件和txt文件发在QQ群中，请自行解压
 ## 快速开始
 ### 修改配置文件
@@ -15,12 +15,13 @@
 + 同时该目录下有一个comsubgraph文件夹-存放与完全子图相关的信息，不需自己生成
 
 ### 创建索引文件
-
+#### 非必须步骤
 - 运行'dblpSystem\src\main\java\com\yejh\indexinit\IndexInitializer.java'类
 - 运行'dblpSystem\src\main\java\com\yejh\xmlparse\XmlParseTest.java'的main函数
 - 运行'dblpSystem\src\main\java\com\yejh\combination\Combination.java'中的tset测试方法进行压缩
 
 ### 创建rank文件
+#### 非必须步骤
 - 运行'dblpSystem\src\main\java\com\yejh\rank\AuthorRankingListGenerator.java'中的两个测试方法生成rank文件夹中的txt文件
 - 同时rank目录下还有一个annual_hot_word_top10.txt文件-存放每年热词的文件
 
