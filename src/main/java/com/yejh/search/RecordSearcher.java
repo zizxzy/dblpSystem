@@ -10,6 +10,7 @@ import com.yejh.utils.TxtUtil;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * RecordSearcher类是记录搜索类，用于在索引文件上搜索记录
@@ -57,7 +58,7 @@ public class RecordSearcher {
                 i = j;
                 break;
             }
-            System.out.println("mid=" + mid + ", name=" + name);
+            //System.out.println("mid=" + mid + ", name=" + name);
             if (nameToFind.equals(name)) {
                 long lineEnd = toNextRecordHead(randomAccessFile, mid);
                 byte[] lineBytes = new byte[(int) (lineEnd - mid - 1)];
@@ -168,7 +169,7 @@ public class RecordSearcher {
         return article;
     }
 
-    public static Author searchCollaboratorsByAuthor(Author author) throws IOException {
+    public static Author searchCollaboratorsByAuthor(final Author author) throws IOException {
         //逐个寻找author发表的论文
         List<Long> locations = author.getLocations();
         List<String> records = new ArrayList<>();
@@ -187,7 +188,9 @@ public class RecordSearcher {
             String articleName = searchArticleNameByRecord(oneRecord);
 
             //搜索合作者
-            List<String> collaborators = searchCollaboratorsByRecord(oneRecord);
+            List<String> authors = searchAuthorsByRecord(oneRecord);
+            List<String> collaborators = authors.stream().filter(item -> !author.getName().equals(item))
+                    .collect(Collectors.toList());
             author.addCollaborators(articleName, collaborators);
 
         }
@@ -316,7 +319,7 @@ public class RecordSearcher {
     /**
      * 根据记录寻找作者
      */
-    public static List<String> searchCollaboratorsByRecord(String record) {
+    public static List<String> searchAuthorsByRecord(String record) {
         String leftTag = "aut";
         //String rightTag = "/aut";
         List<String> collaborators = new ArrayList<>();

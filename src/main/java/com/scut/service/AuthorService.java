@@ -29,6 +29,7 @@ public class AuthorService {
         Author author = null;
         try{
             author = RecordSearcher.binarySearchByAuthor(authorName, !simplified);
+            System.out.println("AuthorService.getAuthorByName(" + authorName + "): " + author);
         } catch (Exception e) {
             e.printStackTrace();
         }

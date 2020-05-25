@@ -28,6 +28,7 @@ public class ArticleService {
         Article article = null;
         try {
             article = RecordSearcher.binarySearchByTitle(articleName);
+            System.out.println("ArticleService.getArticleByName(" + articleName + "): " + article);
         } catch (Exception e) {
             e.printStackTrace();
         }

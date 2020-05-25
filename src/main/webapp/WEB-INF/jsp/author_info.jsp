@@ -73,13 +73,13 @@
                         }
                     });
                     $("#author_locations_static").text(locations);
-                    var collaborators = "";
+                    var collaboratorsContent = "";
                     $.each(author.collaborators, function (index, item) {
-                        collaborators += item + "<br/>";
+                        collaboratorsContent += "【" + index + "】" + item + "<br/>";
                     });
-                    $("#author_collaborators_static").append(collaborators);
+                    $("#author_collaborators_static").append(collaboratorsContent);
                     var articles = "";
-                    $.each(author.articles, function (index, item) {
+                    $.each(author.records, function (index, item) {
                         articles += "第" + index + "条记录:\n" + item + "\n\n";
                     });
                     $('#author_records_static').text(articles)
