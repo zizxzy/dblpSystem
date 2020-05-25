@@ -46,6 +46,14 @@ public class AuthorController {
     }
 
     /**
+     * 跳转到author_relation.jsp页面
+     */
+    @RequestMapping(value = "/toRelation")
+    public String toAuthorRelation() {
+        return "author_relation";
+    }
+
+    /**
      * 从 author\\#{tag}.csv 中载入pageSize条作者记录
      *
      * @param tag        文件名标识
@@ -84,6 +92,7 @@ public class AuthorController {
     @ResponseBody
     @PostMapping("/collaboration")
     public InfoDTO getCollaboratorsByAuthors(@RequestBody List<String> authorsName) {
+        System.out.println("getCollaboratorsByAuthors: " + authorsName);
         List<CollaborativeRelation> collaborativeRelations = new ArrayList<>();
         for (String authorName : authorsName) {
             Author author = authorService.getAuthorByName(authorName, false);

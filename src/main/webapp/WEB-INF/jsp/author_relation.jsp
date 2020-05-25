@@ -1,14 +1,17 @@
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+
 <html>
 <head>
-	<meta charset="utf-8">
+	<title>Author Relation</title>
+	<%--Bootstrap--%>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
 	<!-- 引入 ECharts 文件 -->
-	<script src="../../static/js/echarts.js"></script>
+	<script src="${ctx}/static/js/echarts.js"></script>
 	<style type="text/css">
-        html, body, #main { height: 100%; width: 100%;margin:0;padding:0 }
-    </style>
-    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
-
+		html, body, #main { height: 100%; width: 100%;margin:0;padding:0 }
+	</style>
 </head>
 <body>
 	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
@@ -25,6 +28,11 @@
 			</div>
 			<button type="button" id="getData" class="btn btn-primary col-md-2">获取合作图</button>
 		</div>
+		<small id="emailHelp" class="form-text text-muted">
+			请输入完整作者名，否则可能无法匹配
+			示例: Fritz Obermeyer
+			<br/>目前暂不支持含除ASCII以外字符的作者名称查询
+		</small>
 	</div>
 	<div id="main" style="width: 100%;height:90%;"></div>
 	<script type="text/javascript">

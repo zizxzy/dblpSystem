@@ -20,7 +20,7 @@ public class titleInitializer {
         try {
             InputStream resourceAsStream = RecordSearcher.class.getClassLoader()
                     .getResourceAsStream("config//global.properties");
-            System.out.println(resourceAsStream);
+            System.out.println("titleInitializer: " + resourceAsStream);
             properties.load(resourceAsStream);
             indexFileLocation = (String) properties.get("title_file_root");
         } catch (IOException e) {
@@ -44,7 +44,7 @@ public class titleInitializer {
      * @return 返回初始化的结果
      * @throws NullPointerException
      */
-    @Test
+
     public boolean titleInit() throws NullPointerException {
         stringListHashMap = new ArrayList<Article>();
         File[] file = new File(indexFileLocation).listFiles();

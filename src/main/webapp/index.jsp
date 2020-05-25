@@ -33,6 +33,7 @@
 
 <h3><a href="article/toList">点击此处查看文章列表（JSON解析）</a></h3>
 <h3><a href="author/toList">点击此处查看作者列表（JSON解析）</a></h3>
+<h3><a href="author/toRelation">点击此处查看作者合作关系图</a></h3>
 <h3><a href="author/toRankList">点击此处查看文章数作者排行（JSON解析）</a> </h3>
 <h3><a href="fuzzyQuery/toQueryPage">点击此处进行模糊查询</a></h3>
 <h3><a href="hotWords/toAnnulHotWords">点击此处查看年度热词表格</a></h3>
