@@ -17,6 +17,8 @@
     <link href="${ctx}/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="${ctx}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="${ctx}/static/paging/jquery.sPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow" >
+    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script><br>
 </head>
 <body>
 <div class="container">
@@ -70,6 +72,13 @@
 
 
 <script>
+    //进度条配置
+    $(window).ajaxStart(function () {
+        NProgress.start();
+    });
+    $(window).ajaxStop(function () {
+        NProgress.done();
+    });
     function build_inited_list(result) {
         $("table tbody").empty();
         let ComSubGraphCounts = result.dataMap.comSubGraphCounts;

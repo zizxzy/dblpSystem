@@ -17,6 +17,8 @@
 	<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script> 
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow" >
+	<script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script><br>
 	<!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
 	<div class="container">
 		<div class="row">
@@ -36,6 +38,13 @@
 	</div>
 	<div id="main" style="width: 100%;height:90%;"></div>
 	<script type="text/javascript">
+		//进度条配置
+		$(window).ajaxStart(function () {
+			NProgress.start();
+		});
+		$(window).ajaxStop(function () {
+			NProgress.done();
+		});
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
         

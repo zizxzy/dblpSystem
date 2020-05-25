@@ -62,7 +62,7 @@ public class titleInitializer {
         readThread readThread11 = new readThread(22, 24, file);
         readThread readThread12 = new readThread(25, 26, file);
         try {
-            System.out.println("初始化开始---------------------------------------");
+            System.out.println("初始化模糊查询需要的title列表开始---------------------------------------");
             readThread1.start();
             readThread2.start();
             readThread3.start();
@@ -87,7 +87,7 @@ public class titleInitializer {
             readThread10.join();
             readThread11.join();
             readThread12.join();
-            System.out.println("初始化完成-------------------------------------");
+            System.out.println("初始化模糊查询需要的title列表完成-------------------------------------");
             return true;
         } catch (InterruptedException e) {
             e.printStackTrace();
