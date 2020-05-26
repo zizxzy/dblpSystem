@@ -4,6 +4,7 @@ package com.yejh.xmlparse;/**
  */
 
 import com.yejh.indexinit.IndexInitializer;
+import com.yejh.utils.TxtUtil;
 import com.yejh.xmlparse.impl.IndexXmlParser;
 import org.junit.jupiter.api.Test;
 
@@ -18,9 +19,8 @@ public class XmlParserTest {
     private static String xmlFileLocation;
 
     static {
-        Properties properties = new Properties();
         try {
-            properties.load(new FileInputStream("src//main//resources//config//global.properties"));
+            Properties properties = TxtUtil.getProperties();
             xmlFileLocation = (String) properties.get("xml_file_location");
         } catch (IOException e) {
             e.printStackTrace();

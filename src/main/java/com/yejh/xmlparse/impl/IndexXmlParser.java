@@ -18,7 +18,7 @@ import java.util.*;
 public class IndexXmlParser implements XmlParser {
     //数组不支持泛型
     private static Map<String, List<Long>>[] authorIndex = new HashMap[27];
-    private static Map<String, Long>[] titleIndex = new HashMap[27];
+    private static Map<String, List<Long>>[] titleIndex = new HashMap[27];
 
     private IndexInitializer indexInitializer;
     private Boolean writeToFile = true;
@@ -56,8 +56,8 @@ public class IndexXmlParser implements XmlParser {
     private void writeIndex() throws Exception {
         for (int t = 0; t < 27; ++t) {
             String tag = String.valueOf((char) (t + 'a'));
-            indexInitializer.writeAuthorIndex(authorIndex[t], tag);
-            indexInitializer.writeTitleIndex(titleIndex[t], tag);
+            indexInitializer.writeAuthorIndex(authorIndex[t], tag, true);
+            indexInitializer.writeTitleIndex(titleIndex[t], tag, true);
             authorIndex[t].clear();
             titleIndex[t].clear();
         }
@@ -171,8 +171,13 @@ public class IndexXmlParser implements XmlParser {
                         //得到对应的tag_i
                         int tag_i = TxtUtil.get_tag_i(titleName);
 
-                        //写入hashtable
-                        titleIndex[tag_i].put(titleName, recordPosition);
+                        if (titleIndex[tag_i].get(titleName) != null) {
+                            titleIndex[tag_i].get(titleName).add(recordPosition);
+                        } else {
+                            ArrayList<Long> temp = new ArrayList<Long>();
+                            temp.add(recordPosition);
+                            titleIndex[tag_i].put(titleName, temp);
+                        }
                         //title只有一个 所以直接跳出循环
                         break;
                     }

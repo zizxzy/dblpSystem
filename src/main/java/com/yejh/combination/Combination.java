@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Combination类作用于由XmlParseRunnable类产生的author文件
@@ -27,9 +28,6 @@ public class Combination {
 
     private static String[] tags;
 
-    //Map示例是TreeMap，保证了作者名称的有序性
-    private Map<String, List<Long>> authorIndex;
-    private Map<String, List<Long>> titleIndex;
 
     private IndexInitializer indexInitializer = new IndexInitializer();
 
@@ -54,72 +52,46 @@ public class Combination {
 
     public void combineAuthor() throws Exception {
         for (String tag : tags) {
-            combineSingleAuthorFile(tag);
-            System.out.println(tag + "处理完毕");
+            Map<String, List<Long>> authorIndex = new TreeMap<>();
+            int i = combineSingleFile(authorIndex, authorIndexFileLocation + "//" + tag + ".csv");
+            System.out.println(tag + "处理完毕，有" + i + "条同名作者记录");
+            //写入到文件中
+            indexInitializer.writeAuthorIndex(authorIndex, tag, false);
         }
     }
 
     public void combineTitle() throws Exception {
         for (String tag : tags) {
-            combineSingleTitleFile(tag);
-            System.out.println(tag + "处理完毕");
+            Map<String, List<Long>> titleIndex = new TreeMap<>();
+            int i = combineSingleFile(titleIndex, titleIndexFileLocation + "//" + tag + ".csv");
+            System.out.println(tag + "处理完毕，有" + i + "条同名标题记录");
+            //写入到文件中
+            indexInitializer.writeTitleIndex(titleIndex, tag, false);
         }
     }
 
-    //"Ali Ridha Mahjoub", 38209119, 38456844, 38600115, 38615171
-    private void combineSingleAuthorFile(String tag) throws IOException {
-        String fileName = authorIndexFileLocation + "//" + tag + ".csv";
+
+    private int combineSingleFile(Map<String, List<Long>> indexMap, String fileName) throws IOException {
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(fileName)));
         String line = null;
-        //初始化authorIndex
-        authorIndex = new TreeMap<>();
-        while (scanner.hasNextLine()) {
-            line = scanner.nextLine();
-            //System.out.println(line);
-            String[] split = line.split(", ");
-            String authorName = TxtUtil.pairTrim(split[0], '\"').trim();
-            ArrayList<Long> longs = new ArrayList<>();
-            for (int i = 1; i < split.length; ++i) {
-                longs.add(Long.valueOf(split[i]));
-            }
-            if (authorIndex.containsKey(authorName)) {
-                authorIndex.get(authorName).addAll(longs);
-            } else {
-                authorIndex.put(authorName, longs);
-            }
-        }
-
-        //写入到文件中
-        indexInitializer.writeAuthorIndex(authorIndex, tag, false);
-    }
-
-    private void combineSingleTitleFile(String tag) throws IOException {
-        String fileName = titleIndexFileLocation + "//" + tag + ".csv";
-        Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(fileName)));
-        String line = null;
-        //初始化authorIndex
         int i = 0;
-        titleIndex = new TreeMap<>();
         while (scanner.hasNextLine()) {
             line = scanner.nextLine();
             //System.out.println(line);
-            int gap = TxtUtil.findLast(line, ',');
-            String title = TxtUtil.pairTrim(line.substring(0, gap), '\"').trim();
-            long location = Long.valueOf(line.substring(gap+2));
-            if(titleIndex.containsKey(title)){
-                titleIndex.get(title).add(location);
+            int gap = TxtUtil.findLast(line, '\"') + 1;
+            String name = TxtUtil.pairTrim(line.substring(0, gap), '\"').trim();
+            String locations = line.substring(gap + 2);
+            String[] split = locations.split(", ");
+            List<Long> collect = Arrays.stream(split).map(Long::parseLong).collect(Collectors.toList());
+
+            if (indexMap.containsKey(name)) {
+                indexMap.get(name).addAll(collect);
                 ++i;
-            }else{
-                ArrayList<Long> locations = new ArrayList<>();
-                locations.add(location);
-                titleIndex.put(title, locations);
+            } else {
+                indexMap.put(name, collect);
             }
         }
-        System.out.println(titleIndex.size());
-
-        //写入到文件中
-        System.out.println("有" + i + "条同名标题");
-        indexInitializer.writeBatchTitleIndex(titleIndex, tag, false);
+        return i;
     }
 
 

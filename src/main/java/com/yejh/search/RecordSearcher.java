@@ -154,6 +154,11 @@ public class RecordSearcher {
         //4、如果找到了，根据找到的location在dblp.xml中搜索对应的完整记录
         article = Article.initArticle(recordLine);
         System.out.println("binarySearchByTitle(" + title + ")成功：" + article);
+        //某些标题具有多条记录，例如Home Page 具有两百多万条，所以不允许详细搜索
+        if(article.getLocations().size() > 20){
+            System.out.println("由于该标题具有大量记录，详细搜索结果不予显示");
+            return article;
+        }
         List<Long> locations = article.getLocations();
         randomAccessFile = new RandomAccessFile(new File(xmlFileLocation), "r");
         byte[] b = new byte[39000];        //经测试分析，文件中记录的最大长度接近但不超多39000
@@ -336,7 +341,7 @@ public class RecordSearcher {
                 str = new String(bytes, i, 3);
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("[debug]searchCollaborators:" + record);
+                System.out.println("【error】searchCollaborators:" + record);
             }
             if (leftTag.equals(str)) {
                 flag = true;
@@ -371,7 +376,7 @@ public class RecordSearcher {
                 str = new String(bytes, i, 3);
             } catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("[debug]searchArticleNameByRecord:\n" + record);
+                System.out.println("【error】searchArticleNameByRecord:\n" + record);
             }
             if (leftTag.equals(str)) {
                 while (bytes[i++] != '>') ;

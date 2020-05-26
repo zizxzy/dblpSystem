@@ -33,17 +33,15 @@ public class IndexInitializer {
      * @Author: yejh
      * @Date: 2020/2/17
      */
-    public void writeAuthorIndex(Map<String, List<Long>> authorIndex, String tag, boolean append) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(indexFileLocation).append("//author//").append(tag).append(".csv");
+    public void writeIndex(Map<String, List<Long>> indexMap, String fileName, boolean append) throws IOException {
 
         PrintWriter printWriter = new PrintWriter(new BufferedOutputStream(
-                new FileOutputStream(stringBuilder.toString(), append)));
+                new FileOutputStream(fileName, append)));
 
         int number = 0;
-        stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
 
-        for (Map.Entry<String, List<Long>> entry : authorIndex.entrySet()) {
+        for (Map.Entry<String, List<Long>> entry : indexMap.entrySet()) {
             if (number % 50 == 0) {
                 printWriter.write(stringBuilder.toString());
                 printWriter.flush();
@@ -62,68 +60,22 @@ public class IndexInitializer {
         printWriter.flush();
     }
 
-    public void writeAuthorIndex(Map<String, List<Long>> authorIndex, String tag) throws Exception {
+    @Deprecated
+    public void writeAuthorIndex(Map<String, List<Long>> authorIndex, String tag) throws IOException {
         writeAuthorIndex(authorIndex, tag, true);
     }
 
-    public void writeTitleIndex(Map<String, Long> titleIndex, String tag) throws Exception {
+    public void writeAuthorIndex(Map<String, List<Long>> authorIndex, String tag, boolean append) throws IOException {
+        writeIndex(authorIndex, indexFileLocation + "//author//" + tag + ".csv", append);
+    }
+
+    @Deprecated
+    public void writeTitleIndex(Map<String, List<Long>> titleIndex, String tag) throws IOException {
         writeTitleIndex(titleIndex, tag, true);
     }
 
-    public void writeTitleIndex(Map<String, Long> titleIndex, String tag, boolean append) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(indexFileLocation).append("//title//").append(tag).append(".csv");
-
-        PrintWriter printWriter = new PrintWriter(new BufferedOutputStream(
-                new FileOutputStream(stringBuilder.toString(), append)));
-
-        int number = 0;
-        stringBuilder = new StringBuilder();
-
-        for (Map.Entry<String, Long> entry : titleIndex.entrySet()) {
-            if (number % 50 == 0) {
-                printWriter.write(stringBuilder.toString());
-                printWriter.flush();
-                stringBuilder = new StringBuilder();
-            }
-            stringBuilder.append("\"").append(entry.getKey()).append("\"").append(", ")
-                    .append(entry.getValue()).append("\n");
-
-            ++number;
-        }
-
-        printWriter.write(stringBuilder.toString());
-        printWriter.flush();
-    }
-
-    public void writeBatchTitleIndex(Map<String, List<Long>> titleIndex, String tag, boolean append) throws IOException {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(indexFileLocation).append("//title//").append(tag).append(".csv");
-
-        PrintWriter printWriter = new PrintWriter(new BufferedOutputStream(
-                new FileOutputStream(stringBuilder.toString(), append)));
-
-        int number = 0;
-        stringBuilder = new StringBuilder();
-
-        for (Map.Entry<String, List<Long>> entry : titleIndex.entrySet()) {
-            if (number % 50 == 0) {
-                printWriter.write(stringBuilder.toString());
-                printWriter.flush();
-                stringBuilder = new StringBuilder();
-            }
-            stringBuilder.append("\"").append(entry.getKey()).append("\"");
-            for (Long l : entry.getValue()) {
-                stringBuilder.append(", ").append(l);
-            }
-            stringBuilder.append("\n");
-
-            ++number;
-        }
-
-        printWriter.write(stringBuilder.toString());
-        printWriter.flush();
-
+    public void writeTitleIndex(Map<String, List<Long>> titleIndex, String tag, boolean append) throws IOException {
+        writeIndex(titleIndex, indexFileLocation + "//title//" + tag + ".csv", append);
     }
 
     @Test
@@ -138,13 +90,13 @@ public class IndexInitializer {
         for (int i = 0; i < 200; ++i) {
             authorIndex.put("abc" + i, longs);
         }
-        writeAuthorIndex(authorIndex, "a");
+        writeAuthorIndex(authorIndex, "a", false);
 
         //测试标题
-        Map<String, Long> titleIndex = new HashMap<>();
-        for (int i = 0; i < 200; ++i) {
-            titleIndex.put("This is a title, so can i make it?" + i, 459618924L);
-        }
-        writeTitleIndex(titleIndex, "t");
+//        Map<String, Long> titleIndex = new HashMap<>();
+//        for (int i = 0; i < 200; ++i) {
+//            titleIndex.put("This is a title, so can i make it?" + i, 459618924L);
+//        }
+//        writeTitleIndex(titleIndex, "t");
     }
 }
