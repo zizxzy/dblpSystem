@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
 <html>
 <head>
     <meta charset="utf-8">
@@ -38,5 +40,35 @@
 <h3><a href="fuzzyQuery/toQueryPage">点击此处进行模糊查询</a></h3>
 <h3><a href="hotWords/toAnnulHotWords">点击此处查看年度热词表格</a></h3>
 <h3><a href="comSubGraph/toQuerySubGraph">点击此处进行查询k阶子图的详细信息</a></h3>
+<h3>下面是初始化模糊查询需要的列表的按钮，需要时间大概三、四分钟（摊手），<strong>建议先点击一次</strong>，在初始化期间可以进行其他操作</h3>
+<button type="button" class="btn btn-danger" id="init" onclick="initTitle()">初始化</button>
+<script type="text/javascript">
+    /**
+     *初始化原始数据
+     * */
+    function initTitle() {
+        //1. 发起初始化ajax请求
+        $.ajax({
+            type: "POST",
+            url: "${ctx}/fuzzyQuery/init",
+            traditional: true,
+            data: JSON.stringify({
+                "type": "init"
+            }),
+            headers: {'Content-Type': 'application/json;charset=utf8'},
+            success: function (res) {
+                console.log(res);
+                //2. 初始化成功，进度条拉满
+                if (res.dataMap.msg === "success") {
+
+                }
+            },
+            error: function (err) {
+                alert(err);
+            }
+        })
+    }
+
+</script>
 </body>
 </html>

@@ -3,6 +3,8 @@
 ## 特别注意事项
 - 【已修复】项目根目录/src/main/java/com/scut/comsubgraph/ComSubGraphGetter.java下的第21行情修改为自己项目中的global.properties的绝对路径，不然会报错无法运行
 - 项目运行需要的所有索引文件和txt文件发在QQ群中，请自行解压
+- 要进行模糊查询前必须要在首页点击初始化按钮，需要时间大概三、四分钟（摊手），建议先点击一次，在初始化期间可以进行其他操作
+- 关系图要使用前需要先到author_relation,jsp里面的121行修改为自己项目运行的端口
 ## 快速开始
 ### 修改配置文件
 + 注意：如果已经解压了dblp_index压缩包，则创建索引文件和创建rank文件夹中的文件过程均可以不做，只需修改global.properties中的xml_file_location、index_file_root和title_file_root的值

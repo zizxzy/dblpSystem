@@ -9,6 +9,8 @@
     <%--Bootstrap--%>
     <link href="${ctx}/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="${ctx}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow" >
+    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script><br>
 </head>
 <body>
 <div class="container">
@@ -65,7 +67,13 @@
 
 
 <script>
-
+    //ajax的进度条配置
+    $(window).ajaxStart(function () {
+        NProgress.start();
+    });
+    $(window).ajaxStop(function () {
+        NProgress.done();
+    });
     <%--页面加载完成后，发起ajax请求，获取json数据--%>
     $(function () {
         ajax_to_page(1);

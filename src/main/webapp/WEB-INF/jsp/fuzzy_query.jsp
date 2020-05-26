@@ -18,6 +18,8 @@
     <link rel="stylesheet" type="text/css" href="${ctx}/static/paging/jquery.sPage.css">
     <script src="${ctx}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
     <script src="${ctx}/static/paging/jquery.sPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow" >
+    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script><br>
 </head>
 <body>
 <div class="container">
@@ -41,21 +43,21 @@
                     示例: com,dev,and
                     <br/>目前暂不支持含除ASCII以外字符的查询
                     <br/>初始化耗时会比较久，请耐心等待！！！
-                    <br/>关键词较多时，因为数据量较大，请耐心等待
+                    <br/>关键词较多时，因为数据量较大，请耐心等待，三个词大概需要1分钟
                 </small>
             </div>
             <button type="button" class="btn btn-primary" id="btn1" onclick="ajaxPage(1)">提交</button>
 
-            <button type="button" class="btn btn-danger" id="init" onclick="initTitle()">初始化</button>
+       <%--     <button type="button" class="btn btn-danger" id="init" onclick="initTitle()">初始化</button>--%>
 
         </div>
     </div>
-    <div class="progress mt-2" id="progressFath">
+<%--    <div class="progress mt-2" id="progressFath">
         <div id="progress" class="progress-bar progress-bar-striped active " role="progressbar" aria-valuenow="45"
              aria-valuemin="0" aria-valuemax="100" style="width: 80%">
             <span class="sr-only">45% Complete</span>
         </div>
-    </div>
+    </div>--%>
     <div class="row">
         <div class="col-md-12">
             <table class="table table-hover">
@@ -83,7 +85,13 @@
      * */
     let tag = true;
     let inputValue = "";
-
+    //ajax的进度条配置
+    $(window).ajaxStart(function () {
+        NProgress.start();
+    });
+    $(window).ajaxStop(function () {
+        NProgress.done();
+    });
     /**
      *初始化原始数据
      * */
@@ -97,6 +105,7 @@
                 "type": "init"
             }),
             headers: {'Content-Type': 'application/json;charset=utf8'},
+
             success: function (res) {
                 console.log(res);
                 //2. 初始化成功，进度条拉满
