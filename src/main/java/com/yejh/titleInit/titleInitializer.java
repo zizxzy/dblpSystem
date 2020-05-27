@@ -2,6 +2,7 @@ package com.yejh.titleInit;
 
 import com.yejh.bean.Article;
 import com.yejh.search.RecordSearcher;
+import com.yejh.utils.TxtUtil;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -26,14 +27,7 @@ public class titleInitializer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*titleInit();*/
     }
-
-    /*    public static  int inita()
-        {
-            a = 16;
-            return 16;
-        }*/
     public static List<Article> getStringListHashMap() {
         return stringListHashMap;
     }
@@ -44,8 +38,8 @@ public class titleInitializer {
      * @return 返回初始化的结果
      * @throws NullPointerException
      */
-
-    public boolean titleInit() throws NullPointerException {
+@Test
+    public boolean titleInit() throws Exception {
         stringListHashMap = new ArrayList<Article>();
         File[] file = new File(indexFileLocation).listFiles();
 

@@ -55,13 +55,13 @@ public class ArticleService {
      * @param tag        刷新标记
      * @return 长度为10的列表
      */
-    public static ArticleList_totalRecords getPageArticlesByFuzzyQuery(Integer pageNumber, Integer pageSize, String[] strs, Boolean tag) {
+    public ArticleList_totalRecords getPageArticlesByFuzzyQuery(Integer pageNumber, Integer pageSize, String[] strs, Boolean tag) {
         System.out.println("success");
         if (FuzzyQueryUtil.fuzzyQueryRes(strs, tag)) {
             List<Article> articleList = new ArrayList<Article>();
 
-            List<Article> articleList1 = FuzzyQueryUtil.articleList;
-
+          /*  List<Article> articleList1 = FuzzyQueryUtil.articleList;*/
+            List<Article> articleList1 = FuzzyQueryUtil.resultList;
             if (articleList1.size() <= pageSize) {
                 return new ArticleList_totalRecords(articleList1, articleList1.size());
             }

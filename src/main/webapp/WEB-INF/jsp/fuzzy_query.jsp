@@ -39,11 +39,11 @@
                 <input type="text" class="form-control" id="queryArray"
                        placeholder="请输入以,作为分隔符的关键词组">
                 <small id="emailHelp" class="form-text text-muted">
-                    请输入以,为分隔的关键词组，否则可能无法匹配，
-                    示例: com,dev,and
+                    请输入以,为分隔的关键词组，否则可能无法匹配，需要输入完整的单词组，com、vi这些非单词不好生效
+                    示例: machine,learning
                     <br/>目前暂不支持含除ASCII以外字符的查询
-                    <br/>初始化耗时会比较久，请耐心等待！！！
-                    <br/>关键词较多时，因为数据量较大，请耐心等待，三个词大概需要1分钟
+                    <br/>使用前需要在首页先进行一遍初始化
+                    <br/>关键词较多时，因为数据量较大，请耐心等待，一个词大概几秒，两个词大概需要7秒,三个词大概需要9秒
                 </small>
             </div>
             <button type="button" class="btn btn-primary" id="btn1" onclick="ajaxPage(1)">提交</button>
