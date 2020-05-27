@@ -78,7 +78,7 @@ public class AuthorController {
     @ResponseBody
     @PostMapping()
     public InfoDTO getAuthorByNamePost(String authorName) {
-        Author author = authorService.getAuthorByName(authorName, false);
+        Author author = authorService.getAuthorByName(authorName.trim(), false);
         if (author != null) {
             return InfoDTO.success().addData("author", author);
         } else {
@@ -95,6 +95,7 @@ public class AuthorController {
         System.out.println("getCollaboratorsByAuthors: " + authorsName);
         List<CollaborativeRelation> collaborativeRelations = new ArrayList<>();
         for (String authorName : authorsName) {
+            authorName = authorName.trim();
             Author author = authorService.getAuthorByName(authorName, false);
             if (author != null) {
                 Map<String, List<String>> collaborators = author.getCollaborators();

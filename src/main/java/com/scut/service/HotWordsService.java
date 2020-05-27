@@ -20,7 +20,7 @@ public class HotWordsService {
      * 获取每年热词
      * @return 返回一个hashmap，键是年份，值是热词列表
      */
-    public HashMap<String, ArrayList<Word>> getHotWords() {
+    public Map<String, List<Word>> getHotWords() {
         AnnualHotWordRankingListGenerator annualHotWordRankingListGenerator = new AnnualHotWordRankingListGenerator();
         try {
             return annualHotWordRankingListGenerator.readRankingList();

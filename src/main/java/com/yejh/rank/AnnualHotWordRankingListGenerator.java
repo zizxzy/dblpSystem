@@ -1,6 +1,6 @@
 package com.yejh.rank;
 /*
- * Created bylizeyu on 2020/3/29 15:40
+ * Created by lizeyu on 2020/3/29 15:40
  */
 
 import com.yejh.bean.Word;
@@ -38,9 +38,9 @@ public class AnnualHotWordRankingListGenerator {
      * @throws Exception
      */
 
-    public HashMap<String, ArrayList<Word>> readRankingList() throws Exception {
+    public Map<String, List<Word>> readRankingList() throws Exception {
         Scanner scanner = new Scanner(new BufferedInputStream(new FileInputStream(rankFileLocation)));
-        HashMap<String, ArrayList<Word>> hotWords = new HashMap<>();
+        Map<String, List<Word>> hotWords = new HashMap<>();
 
         for (int i = 0; i < 86; i++) {
             ArrayList<Word> wordsList = new ArrayList<>();

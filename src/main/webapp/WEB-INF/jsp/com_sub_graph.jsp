@@ -56,8 +56,8 @@
                 <caption></caption>
                 <thead>
                 <tr>
-                    <th>序号</th>
-                    <th>子图结果</th>
+                    <th>阶数</th>
+                    <th>子图数量</th>
                 </tr>
                 </thead>
                 <tbody>

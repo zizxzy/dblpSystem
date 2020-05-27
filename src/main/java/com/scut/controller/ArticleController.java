@@ -56,7 +56,7 @@ public class ArticleController {
     @ResponseBody
     @GetMapping("/{articleName}")
     public InfoDTO getArticleByName(@PathVariable("articleName") String articleName) {
-        Article article = articleService.getArticleByName(articleName);
+        Article article = articleService.getArticleByName(articleName.trim());
         if (article != null) {
             return InfoDTO.success().addData("article", article);
         } else {
@@ -70,7 +70,7 @@ public class ArticleController {
     @ResponseBody
     @PostMapping()
     public InfoDTO getArticleByNamePost(String articleName) {
-        Article article = articleService.getArticleByName(articleName);
+        Article article = articleService.getArticleByName(articleName.trim());
         if (article != null) {
             return InfoDTO.success().addData("article", article);
         } else {

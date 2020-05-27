@@ -226,7 +226,7 @@ public class IndexXmlParser implements XmlParser {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("[debug]cur: " + curPosition);
+            System.out.println("[error]IndexXmlParser cur: " + curPosition);
             throw new RuntimeException("越界");
         } finally {
             long endTime = System.currentTimeMillis();

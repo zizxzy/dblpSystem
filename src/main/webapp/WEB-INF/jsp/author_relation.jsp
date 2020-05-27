@@ -118,7 +118,7 @@
     			console.log(inputnames);
 	        	$.ajax({
 		            type: "POST",
-		            url: "http://localhost:8888/dblpSystem/author/collaboration",
+					url: "${ctx}/author/collaboration",
 		            contentType: "application/json;charset=utf-8",
 		            // data:JSON.stringify(['Toshihiro Osaragi']),
 		            data:JSON.stringify(inputnames),
