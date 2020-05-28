@@ -123,16 +123,6 @@
         })
     }
 
-    /*
-    * 定时器，实时输出inputValue和tag的值，自执行函数
-    * */
-    (function (i) {
-        setInterval(function () {
-            console.log(inputValue);
-            console.log(tag);
-        }, 10000)
-    })(12);
-
     /*根据后台返回的结果渲染页面*/
     function build_queryRes_table(result) {
         // 清空上一页的显示数据
@@ -142,7 +132,8 @@
         // 遍历集合articles, 对于每一条记录，执行回调函数
         // 将每一条记录封装到一个tr中，添加到表格中
         $.each(articles, function (index, item) {
-            // 每一个属性字段放在一个td里面
+          if(item !== null){
+             // 每一个属性字段放在一个td里面
             var titleTd = $("<td></td>").append(item.title);
             var locationsTd = $("<td></td>").append(item.locations);
             // <button class="btn btn-info btn-sm">
@@ -160,6 +151,7 @@
             var itemTr = $("<tr></tr>").append(titleTd).append(locationsTd).append(operateTd);
             // 将此tr加到table tbody里面
             itemTr.appendTo($("table tbody"));
+          }
         });
     }
 
