@@ -19,6 +19,8 @@ public class Article implements Serializable {
 
     private List<String> records;
 
+    private static Article articleNotExist = new Article("该文章不存在，请检查是否含有特殊字符", null);
+
     public Article() {
     }
 
@@ -30,13 +32,13 @@ public class Article implements Serializable {
     //通过一行记录初始化article
     //例如读取"2D map-building and localization in outdoor environments.", 376645359
     //返回new Article(title, location)
-    public static Article initArticle(String line){
+    public static Article initArticle(String line) {
         int gap = TxtUtil.findLast(line, '\"');
         String title = TxtUtil.pairTrim(line.substring(1, gap), '\"').trim();
-        String rest = line.substring(gap+3);
+        String rest = line.substring(gap + 3);
         String[] split = rest.split(", ");
         ArrayList<Long> longs = new ArrayList<>();
-        for(int i = 0; i < split.length; ++i){
+        for (int i = 0; i < split.length; ++i) {
             longs.add(Long.valueOf(split[i]));
         }
         return new Article(title, longs);
@@ -58,8 +60,8 @@ public class Article implements Serializable {
         return records;
     }
 
-    public void addRecord(String record){
-        if(records == null){
+    public void addRecord(String record) {
+        if (records == null) {
             this.records = new ArrayList<>();
         }
         this.records.add(record);
@@ -67,6 +69,10 @@ public class Article implements Serializable {
 
     public void setRecords(List<String> records) {
         this.records = records;
+    }
+
+    public static Article getArticleNotExist() {
+        return articleNotExist;
     }
 
     @Override

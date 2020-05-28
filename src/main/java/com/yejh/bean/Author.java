@@ -21,13 +21,17 @@ public class Author {
 
     private Map<String, List<String>> collaborators;
 
+    private static Author authorNotExist = new Author("该作者不存在，请检查作者名是否含有特殊字符", null);
+
     public Author() {
     }
 
     public Author(String name, List<Long> locations) {
         this.name = name;
         this.locations = locations;
-        this.articleNumber = locations.size();
+        if(locations != null){
+            this.articleNumber = locations.size();
+        }
     }
 
     public static Author initAuthor(String line, boolean readRank) {
@@ -93,7 +97,7 @@ public class Author {
         this.collaborators = collaborators;
     }
 
-    public void addCollaborators( String articleName, List<String> collaborators) {
+    public void addCollaborators(String articleName, List<String> collaborators) {
         if (collaborators == null) {
             return;
         }
@@ -102,6 +106,10 @@ public class Author {
         }
         this.collaborators.put(articleName, collaborators);
         //System.out.println("debug: " + collaborators);
+    }
+
+    public static Author getAuthorNotExist() {
+        return authorNotExist;
     }
 
     @Override

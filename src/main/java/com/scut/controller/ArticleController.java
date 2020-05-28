@@ -60,7 +60,7 @@ public class ArticleController {
         if (article != null) {
             return InfoDTO.success().addData("article", article);
         } else {
-            return InfoDTO.fail();
+            return InfoDTO.fail().addData("article", Article.getArticleNotExist());
         }
     }
 
@@ -74,7 +74,7 @@ public class ArticleController {
         if (article != null) {
             return InfoDTO.success().addData("article", article);
         } else {
-            return InfoDTO.fail();
+            return InfoDTO.fail().addData("article", Article.getArticleNotExist());
         }
     }
 }

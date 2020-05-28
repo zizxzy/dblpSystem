@@ -78,7 +78,7 @@
             let yearTr = $("<tr></tr>");
             yearTr.append(yearTitle);
 
-            $.each(hotWordsList, (idnex, item) => {
+            $.each(hotWordsList, (index, item) => {
                 yearTr.append($("<td></td>").append(item.value + ":" + item.count));
             });
             yearTr.appendTo($("table tbody"));

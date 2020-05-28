@@ -46,12 +46,13 @@
 </div>
 <script>
 
-    function clearInfo(){
+    function clearInfo() {
         $("#author_name_static").text('');
         $("#author_locations_static").text('');
         $("#author_collaborators_static").text('');
         $("#author_records_static").text('');
     }
+
     /**
      * 查询指定id的员工信息并显示
      * @param empId
@@ -62,8 +63,8 @@
             type: "POST",
             data: {'authorName': author_name},
             success: function (result) {
+                var author = result.dataMap.author;
                 if (result.code === "200") {
-                    var author = result.dataMap.author;
                     $('#author_name_static').text(author.name);
                     var locations = "";
                     $.each(author.locations, function (index, item) {
@@ -83,6 +84,8 @@
                         articles += "第" + index + "条记录:\n" + item + "\n\n";
                     });
                     $('#author_records_static').text(articles)
+                } else {
+                    $('#author_name_static').text(author.name);
                 }
             }
         });
@@ -118,6 +121,23 @@
         $("#infoModal").modal({
             backdrop: "static"
         });
+    });
+
+    $(document).on("click", "#search-submit", function () {
+        clearInfo();
+        // alert("edit");
+        // 2.查出当前员工信息并显示
+        // const temp = $("#authorName");
+        // console.log(temp);
+        // console.log(temp[0]);
+        const author_name = $("#authorName")[0].value;
+        //alert(author_name);
+        getAuthorInfo(author_name);
+        // 3.弹出模态框进行修改操作
+        $("#infoModal").modal({
+            backdrop: "static"
+        });
+        return false;
     });
 
 </script>

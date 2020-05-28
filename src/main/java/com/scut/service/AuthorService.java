@@ -4,7 +4,7 @@ package com.scut.service;/**
  */
 
 import com.yejh.bean.Author;
-import com.yejh.rank.AuthorRankingListGenerator;
+import com.yejh.rank.impl.AuthorRankingListGenerator;
 import com.yejh.search.RecordSearcher;
 import org.springframework.stereotype.Service;
 

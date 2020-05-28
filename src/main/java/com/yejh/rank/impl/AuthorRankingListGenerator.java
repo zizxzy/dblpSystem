@@ -1,10 +1,11 @@
-package com.yejh.rank;/**
+package com.yejh.rank.impl;/**
  * @author yejh
  * @create 2020-02_17 18:33
  */
 
 import com.yejh.bean.Author;
 import com.yejh.loader.RecordLoader;
+import com.yejh.rank.RankingListGenerator;
 import com.yejh.search.RecordSearcher;
 import org.junit.jupiter.api.Test;
 

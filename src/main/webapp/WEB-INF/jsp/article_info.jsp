@@ -54,9 +54,10 @@
             url: "${ctx}/article",
             type: "POST",
             data: {'articleName': article_name},
+
             success: function (result) {
+                var article = result.dataMap.article;
                 if (result.code === "200") {
-                    var article = result.dataMap.article;
                     $('#article_title_static').text(article.title);
 
                     var locations = "";
@@ -73,6 +74,8 @@
                         articles += "第" + index + "条记录:\n" + item + "\n\n";
                     });
                     $("#article_records_static").text(articles);
+                }else{
+                    $('#article_title_static').text(article.title);
                 }
             }
         });
@@ -108,6 +111,23 @@
         $("#infoModal").modal({
             backdrop: "static"
         });
+    });
+
+    $(document).on("click", "#search-submit", function () {
+        clearInfo();
+        // alert("edit");
+        // 2.查出当前员工信息并显示
+        // const temp = $("#authorName");
+        // console.log(temp);
+        // console.log(temp[0]);
+        const article_title = $("#articleName")[0].value;
+        // alert(article_title);
+        getArticleInfo(article_title);
+        // 3.弹出模态框进行修改操作
+        $("#infoModal").modal({
+            backdrop: "static"
+        });
+        return false;
     });
 
 </script>

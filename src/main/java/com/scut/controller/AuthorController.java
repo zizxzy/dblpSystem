@@ -82,7 +82,7 @@ public class AuthorController {
         if (author != null) {
             return InfoDTO.success().addData("author", author);
         } else {
-            return InfoDTO.fail();
+            return InfoDTO.fail().addData("author", Author.getAuthorNotExist());
         }
     }
 

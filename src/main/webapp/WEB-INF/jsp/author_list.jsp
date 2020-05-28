@@ -10,8 +10,9 @@
     <%--Bootstrap--%>
     <link href="${ctx}/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="${ctx}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow" >
-    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script><br>
+    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow">
+    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script>
+    <br>
 </head>
 <body>
 <div class="container">
@@ -25,17 +26,17 @@
     <%--第二行 搜索框--%>
     <div class="row">
         <div class="col-md-12">
-            <form action="${ctx}/author" method="post">
+            <form id="searchForm" action="${ctx}/author" method="post">
                 <div class="form-group">
                     <label for="authorName">作者名称 Author name</label>
-                    <input type="text" name="authorName" class="form-control" id="authorName" placeholder="请输入作者名称">
+                    <input id="authorName" type="text" name="authorName" class="form-control" placeholder="请输入作者名称">
                     <small id="emailHelp" class="form-text text-muted">
                         请输入完整作者名，否则可能无法匹配
                         示例: Fritz Obermeyer
                         <br/>目前暂不支持含除ASCII以外字符的作者名称查询
                     </small>
                 </div>
-                <button type="submit" class="btn btn-primary">提交</button>
+                <button id="search-submit" type="button" class="btn btn-primary">提交</button>
             </form>
         </div>
     </div>
@@ -90,6 +91,9 @@
      * @param pageNum
      */
     function ajax_to_page(pageNum) {
+        // $("#search-submit").click(function () {
+        //     return false;
+        // });
         $.ajax({
             url: "${ctx}/author/json",
             type: "GET",
@@ -120,7 +124,7 @@
         var authors = result.dataMap.pageAuthors;
         // 遍历集合author, 对于每一条记录，执行回调函数
         // 将每一条记录封装到一个tr中，添加到表格中
-        $.each(authors,function (index,item) {
+        $.each(authors, function (index, item) {
             // 每一个属性字段放在一个td里面
             var nameTd = $("<td></td>").append(item.name);
             var articleNumberTd = $("<td></td>").append(item.articleNumber);
@@ -130,14 +134,14 @@
             // alert(locations.length);
             $.each(locations, function (index, item) {
 
-                if(index >= 5){
+                if (index >= 5) {
                     return;
                 }
                 locationsTd.append(item);
-                if(index < 4 && index < locations.length - 1){
+                if (index < 4 && index < locations.length - 1) {
                     locationsTd.append(", ");
                 }
-                if(index === 4 && locations.length > 5){
+                if (index === 4 && locations.length > 5) {
                     locationsTd.append("...");
                 }
             });
@@ -149,7 +153,7 @@
                 .append($("<span></span>").addClass("glyphicon glyphicon-pencil"))
                 .append("查看详情");
             // 自定义一个属性，用于保存当前记录标题,便于之后的查询传值
-            btnEdit.attr("author_name",item.name);
+            btnEdit.attr("author_name", item.name);
 
             // 所有td组成一个tr
             var operateTd = $("<td></td>").append(btnEdit);

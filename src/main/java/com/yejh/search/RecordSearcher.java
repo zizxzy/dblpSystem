@@ -44,7 +44,6 @@ public class RecordSearcher {
         long i = 0, j = randomAccessFile.length();
         long last_i = i;
         long mid;
-        byte[] bytes = new byte[1024];
         while (i < j) {
             mid = i + ((j - i) >> 1);
             //定位到下一条记录的开始位置
@@ -112,7 +111,6 @@ public class RecordSearcher {
      * @Param searchPaper：是否搜索他的论文记录，searchCollaborator：是否搜索他的合作者
      */
     public static Author binarySearchByAuthor(String authorName, boolean searchCollaborator) throws Exception {
-        Author author = null;
         String fileName = getFileName(authorName);
         if (fileName == null) {
             return null;
@@ -122,7 +120,7 @@ public class RecordSearcher {
         if (recordLine == null || "".equals(recordLine)) {
             return null;
         }
-        author = Author.initAuthor(recordLine);
+        Author author = Author.initAuthor(recordLine);
         if (searchCollaborator) {
             author = searchCollaboratorsByAuthor(author);
         }
@@ -153,7 +151,7 @@ public class RecordSearcher {
         }
         //4、如果找到了，根据找到的location在dblp.xml中搜索对应的完整记录
         article = Article.initArticle(recordLine);
-        System.out.println("binarySearchByTitle(" + title + ")成功：" + article);
+        //System.out.println("binarySearchByTitle(" + title + ")成功：" + article);
         //某些标题具有多条记录，例如Home Page 具有两百多万条，所以不允许详细搜索
         if(article.getLocations().size() > 20){
             System.out.println("由于该标题具有大量记录，详细搜索结果不予显示");

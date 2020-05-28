@@ -9,8 +9,9 @@
     <%--Bootstrap--%>
     <link href="${ctx}/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="${ctx}/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow" >
-    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script><br>
+    <link rel="stylesheet" type="text/css" href="${ctx}/static/progress/nprogress.css" rel="external nofollow">
+    <script src="${ctx}/static/progress/nprogress.js" type="text/javascript"></script>
+    <br>
 </head>
 <body>
 <div class="container">
@@ -24,17 +25,17 @@
     <%--第二行 搜索框--%>
     <div class="row">
         <div class="col-md-12">
-            <form action="${ctx}/article" method="post">
+            <form id="searchForm" action="${ctx}/article" method="post">
                 <div class="form-group">
                     <label for="articleName">文章标题 Article name</label>
-                    <input type="text" name="articleName" class="form-control" id="articleName" placeholder="请输入文章标题">
+                    <input id="articleName" type="text" name="articleName" class="form-control" placeholder="请输入文章标题">
                     <small id="emailHelp" class="form-text text-muted">
                         请输入完整标题，否则可能无法匹配
                         示例: A "CS 1.5" introduction to web programming.
                         <br/>目前暂不支持含除ASCII以外字符的标题查询
                     </small>
                 </div>
-                <button type="submit" class="btn btn-primary">提交</button>
+                <button id="search-submit" type="submit" class="btn btn-primary">提交</button>
             </form>
         </div>
     </div>
@@ -118,7 +119,7 @@
         var articles = result.dataMap.pageArticles;
         // 遍历集合articles, 对于每一条记录，执行回调函数
         // 将每一条记录封装到一个tr中，添加到表格中
-        $.each(articles,function (index,item) {
+        $.each(articles, function (index, item) {
             // 每一个属性字段放在一个td里面
             var titleTd = $("<td></td>").append(item.title);
             var locationsTd = $("<td></td>").append(item.locations);
@@ -130,7 +131,7 @@
                 .append($("<span></span>").addClass("glyphicon glyphicon-pencil"))
                 .append("查看详情");
             // 自定义一个属性，用于保存当前记录标题,便于之后的查询传值
-            btnEdit.attr("article_title",item.title);
+            btnEdit.attr("article_title", item.title);
 
             // 所有td组成一个tr
             var operateTd = $("<td></td>").append(btnEdit);

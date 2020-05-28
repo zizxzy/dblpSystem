@@ -36,9 +36,9 @@ public class AnnualHotWordTop10Controller {
     @ResponseBody
     public InfoDTO getQueryArticleToJson() {
         Map<String, List<Word>> hotWords = hotWordsService.getHotWords();
-        for (Map.Entry<String, List<Word>> entry : hotWords.entrySet()) {
-            System.out.println(entry.getKey() + " " + entry.getValue());
-        }
+//        for (Map.Entry<String, List<Word>> entry : hotWords.entrySet()) {
+//            System.out.println(entry.getKey() + " " + entry.getValue());
+//        }
         if (!hotWords.isEmpty()) {
             return InfoDTO.success().addData("hotWords", hotWords);
         } else {
