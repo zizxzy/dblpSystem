@@ -56,8 +56,8 @@
                 <caption></caption>
                 <thead>
                 <tr>
-                    <th>阶数</th>
-                    <th>子图数量</th>
+                    <th id="th-1">阶数</th>
+                    <th id="th-2">子图数量</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -128,12 +128,14 @@
         let title = $("caption").append("共有" + number + "个" + k + "阶完全子图");
         //4. 遍历返回的子图列表
         $.each(comSubGraph, (index, item) => {
+            $("#th-1").text("序号");
+            $("#th-2").text("完全子图");
             //5. 对每一个子图的作者名进行拼接
             let authorTxt = item.toString();
             // 生成一行tr
             let itemTr = $("<tr></tr>");
             //7.每一个属性字段放在一个td里面
-            itemTr.append($("<td></td>").append(index));
+            itemTr.append($("<td></td>").append(index+1));
             itemTr.append($("<td></td>").append(authorTxt));
             //8.将此tr加到table tbody里面
             itemTr.appendTo($("table tbody"));

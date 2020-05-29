@@ -2,6 +2,8 @@ package com.scut.comsubgraph;
 /* @author lss
  * @create 2020-02_26 12:00
  */
+import com.yejh.utils.TxtUtil;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,10 +15,9 @@ public class SubGraphInit {
 
         String XMLPath;
         String indexFileLocation;
-        Properties properties = new Properties();
         try {
             //从配置文件获取文件以及csv存放的目录路径
-            properties.load(new FileInputStream("src//main//resources//config//global.properties"));
+            Properties properties = TxtUtil.getProperties();
             XMLPath = (String) properties.get("xml_file_location");
             indexFileLocation = (String) properties.get("index_file_root");
             StringBuilder stringBuilder = new StringBuilder();
